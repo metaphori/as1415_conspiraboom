@@ -28,8 +28,8 @@ If the Red Team's Bomber is in the same room as the President at the end of the 
 
 ### Why is this game funny?
 
-**Two Rooms and a Boom** entertains its players by making them interact in a **socially dynamic context
- where *competition*, *cooperation*, and *unpredictability* play a key role**.
+**Two Rooms and a Boom entertains its players by making them interact in a _socially dynamic context_
+ where _competition_, _cooperation_, and _unpredictability_ play a key role**.
  People stay puzzled: ``is he a team-mate or an enemy?``, ``what's her strategy``, ``what's the deep reason for his actions?``,  ``what's happening in the other room?``, ``what happens if I do this?`` 
 
 Essentially, interaction has *no rules*; the only regulations that apply are those of your national legal system: 
@@ -203,15 +203,15 @@ The following are examples of reasoning.
 |  **Given**                              |  **Inferred knowledge**                         |
 |---------------------------------------- | ------------------------------------------------|
 i. The number of players <br /> ii. The distribution of roles  in a team <br /> iii. The roles of a subset of player | The probability of player P to have role R
-(i) Player X asks me to co-reveal <br /> (ii) I don't know his/her role | (X = president/bomber) is quite probable. 
-(i) A team-mate tells me some information & That information is true. | ...
+i. Player X asks me to co-reveal <br /> ii. I don't know his/her role | (X = president/bomber) is quite probable. 
+i. A team-mate tells me some information & That information is true. | ...
 
-**Practical reasoning*
+**Practical reasoning**
 
 |  **Given**                              |  **Inferred action**                         |
 |---------------------------------------- | ------------------------------------------------|
-(i) Me and my team-mates have decided that X has to be voted  |  Vote X
-(i) I am the room leader and a red player & Send the bomber to the other room based on <br /> (ii) It is the last round & the probability of the president to be sent here <br /> (iii) The bomber is in this room <br /> (iv) The president is in the other room | ...
+i. Me and my team-mates have decided that X has to be voted  |  Vote X
+i. I am the room leader and a red player & Send the bomber to the other room based on <br /> ii. It is the last round & the probability of the president to be sent here <br /> iii. The bomber is in this room <br /> iv. The president is in the other room | ...
 
  
 # Technical requirements
@@ -224,32 +224,28 @@ When the game is implemented as a software system, it should satisfy the followi
 %In order to reduce the *abstraction gap*, we draw the following technical requirements:
 
 
-% - **Agent-oriented paradigm*: a sound conceptual framework to understand/design/build agents 
-%  that exhibit characteristics such as autonomy, proactivity, situatedness
- - **Ontological reasoning*: so that agents can infer implicit knowledge from explicitly represented facts
- - **Probabilistic reasoning*: so that agents can deal with uncertainty
+- **Agent-oriented paradigm**: a sound conceptual framework to understand/design/build agents that exhibit characteristics such as autonomy, proactivity, situatedness
+- **Ontological reasoning**: so that agents can infer implicit knowledge from explicitly represented facts
+- **Probabilistic reasoning**: so that agents can deal with uncertainty
 %- (Approximate/fuzzy reasoning?)
 
 
 In addition to such aspects, we should be able to express the following features:
 
 
- - **Attitudes* for agents
- 
+- **Attitudes* for agents
   - E.g., the *``character''* (inclination) of a player may be considered as associated with a particular *``approach''* 
   to the game (which ultimately defines a coherent position wrt strategies). 
   However, players may occasionally take *unexpected* courses of action.
- 
- - **Cooperative strategies*
- - **Stochastic behavior*
- - (**Falsehood* and **trust*?)
+- **Cooperative strategies*
+- **Stochastic behavior*
+- (**Falsehood* and **trust*?)
 
 
 
 # Feasibility analysis
 
-A question that must be addressed is: **can we build, with *reasonable* effort, a computer program that is able to play 
- this game *effectively*? **
+A question that must be addressed is: **can we build, with _reasonable_ effort, a computer program that is able to play this game _effectivel_? **
  
 Of course, the answer depends on the meaning of "reasonable" and "effectively".
  
