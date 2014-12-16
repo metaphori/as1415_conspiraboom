@@ -38,6 +38,13 @@ room_mates(Rms) :- my_room(MyRoom) & .findall(P, room(P, MyRoom), Rms).
 	.print("Interaction phase");
 	.
 	
++turn(Who) : .my_name(Me) & Who==Me <-
+	.print("Ehy, but it is my turn!!! :) :) :) ");
+	ok_i_am_done
+	.
+	
++turn(Who) : .my_name(Me) & Who\==Me <- true.
+	
 +phase(hostages_exchange) : .my_name(Me) & room_leader(Me) <-
 	!choose_hostage(H);
 	select_hostage(H);

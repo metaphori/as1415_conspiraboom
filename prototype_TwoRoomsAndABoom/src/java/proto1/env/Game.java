@@ -6,6 +6,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.logging.Logger;
 
@@ -16,6 +17,11 @@ import proto1.game.impl.Rooms;
 import proto1.game.impl.Team;
 import proto1.game.impl.TeamRoles;
 import proto1.game.impl.Teams;
+import proto1.game.impl.Turn;
+import proto1.game.interfaces.IPlayer;
+import proto1.game.interfaces.IRoom;
+import proto1.game.interfaces.ITurn;
+import utils.Tuple;
 
 public class Game extends Observable {			
 	
@@ -81,8 +87,6 @@ public class Game extends Observable {
 	public synchronized boolean SwapHostages(Player h1, Player h2){
 		h1.setRoom(Rooms.ROOM2);
 		h2.setRoom(Rooms.ROOM1);
-		//Rooms.ROOM1.setPhase(RoundPhase.HostageExchanged);
-		//Rooms.ROOM2.setPhase(RoundPhase.HostageExchanged);
 		
 		this.setChanged();
 		notifyObservers(new HOSTAGES_EXCHANGE(h1,h2));
@@ -215,8 +219,48 @@ public class Game extends Observable {
 		notifyObservers(new ROOM_PLACEMENT()); // notify env model so that positions of players can be updated
 	}
 	
+	protected ITurn turnForRoom1 = null;
+	protected ITurn turnForRoom2 = null;
 	protected synchronized void ProceedWithInteraction(){
 		this.state = GamePhase.Interaction;
+		
+		// Initialize the turn in both rooms
+		turnForRoom1 = new Turn(getPlayersInRoom(Rooms.ROOM1), 1);
+		turnForRoom2 = new Turn(getPlayersInRoom(Rooms.ROOM2), 1);
+		advanceTurnInRoom(Rooms.ROOM1);
+		advanceTurnInRoom(Rooms.ROOM2);
+	}
+	protected synchronized ITurn getTurnForRoom(IRoom room){
+		if(room.equals(Rooms.ROOM1))
+			return turnForRoom1;
+		else if(room.equals(Rooms.ROOM2))
+			return turnForRoom2;
+		return null;
+	}
+	public synchronized IPlayer currentTurnInRoom(IRoom room){
+		ITurn turn = getTurnForRoom(room);
+		return turn.currentTurn();
+	}
+	
+	public synchronized boolean advanceTurnInRoom(IRoom room){			
+		if(IsInteractionEnded()){
+			logger.info("NO MORE TURNS IN BOTH ROOMS => END INTERACTION");
+			this.EndInteraction();
+		} else{
+			ITurn turn = getTurnForRoom(room);
+			turn.next();
+			logger.info("TURN " + room + " ... " + turn);
+			this.setChanged();
+			this.notifyObservers(new NEXT_TURN(room, turn));
+		}
+		
+		return true;
+	}
+	
+	protected synchronized boolean IsInteractionEnded(){
+		logger.info("Turn room1 " + turnForRoom1);
+		logger.info("Turn room2 " + turnForRoom2);
+		return !(turnForRoom1.hasNext() || turnForRoom2.hasNext());
 	}
 	
 	protected synchronized void SetupNewRound(){
@@ -266,7 +310,7 @@ public class Game extends Observable {
 		return result;
 	}
 	
-	public synchronized List<Player> getPlayersInRoom(Room room){
+	public synchronized List<Player> getPlayersInRoom(IRoom room){
 		List<Player> result = new ArrayList<Player>();
 		for(Player p : players){
 			if(p.getRoom().equals(room))
@@ -325,6 +369,15 @@ public class Game extends Observable {
 		
 		public GAME_PHASE_COMPLETED(GamePhase phase_completed){
 			this.phase = phase_completed;
+		}
+	}	
+	public class NEXT_TURN extends NotifyEvents {
+		public IRoom room;
+		public ITurn turn;
+		
+		public NEXT_TURN(IRoom room, ITurn turn){
+			this.room = room;
+			this.turn = turn;
 		}
 	}	
 }
