@@ -5,7 +5,7 @@ ConspiraBoom
 
 ## Introduction
 
-**_ConspiraBoom_ is a socio-technical game ** that draws strong inspiration from _Two Rooms and a Boom_ (See more here: https://www.kickstarter.com/projects/gerdling/two-rooms-and-a-boom).
+** _ConspiraBoom_ is a socio-technical game ** that draws strong inspiration from _Two Rooms and a Boom_ (See more here: https://www.kickstarter.com/projects/gerdling/two-rooms-and-a-boom).
 
 ### Two Rooms and a Boom
 
