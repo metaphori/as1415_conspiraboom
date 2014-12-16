@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 
 import proto1.game.impl.Player;
 import proto1.game.impl.TeamRole;
-import proto1.game.impl.TeamRoles;
+import proto1.game.kb.TeamRoles;
 import sun.font.FontScaler;
 import jason.environment.grid.GridWorldView;
 

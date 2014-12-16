@@ -16,13 +16,16 @@ import proto1.env.Game.GamePhase;
 import proto1.env.Game.NEXT_TURN;
 import proto1.game.impl.Player;
 import proto1.game.impl.Room;
-import proto1.game.impl.Rooms;
 import proto1.game.impl.Team;
 import proto1.game.impl.Turn;
 import proto1.game.interfaces.IPlayer;
 import proto1.game.interfaces.IRoom;
 import proto1.game.interfaces.ITurn;
+import proto1.game.kb.Actions;
+import proto1.game.kb.Rooms;
+import proto1.gui.UserCommandFrame;
 import utils.Tuple;
+import utils.Utils;
 
 public class Env extends Environment implements Observer {
 
@@ -30,15 +33,6 @@ public class Env extends Environment implements Observer {
 	public static final int PLAYER = 16;
 	public static final int LEADER = 32;
 	public static final int DOOR = 64;	
-	
-	/* Action literals */
-	public static class Actions {
-		//public static final String F_go_to_room = "go_to_room";
-		public static final String WANNA_PLAY = "wanna_play";
-		public static final String VOTE_LEADER = "vote";
-		public static final String SELECT_HOSTAGE = "select_hostage";
-		public static final String OK_I_AM_DONE = "ok_i_am_done";
-	}
 	
     private Logger logger = Logger.getLogger("prototype_TwoRoomsAndABoom."+Env.class.getName());
 
@@ -80,20 +74,37 @@ public class Env extends Environment implements Observer {
     public boolean executeAction(String agName, Structure action) {
     	boolean result = false;
 
-    	List<Term> terms = action.getTerms();
-    	String functor = action.getFunctor();
+    	Literal act = action;
+    	
+    	List<Term> terms = act.getTerms();
+    	String functor = act.getFunctor();
     	Player p = game.getPlayerFromName(agName);
     	
+    	if(functor.equals(Actions.DELEGATE_TO_HUMAN)){
+    		String str = UserCommandFrame.AskCommandToUser("Phase: " + game.state);
+    		act = Structure.parseLiteral(str);
+    		logger.info("ACTION RESULT: " + act);
+    	} 
+    	
+    	terms = act.getTerms();
+    	functor = act.getFunctor();    	
+    	
     	if(functor.equals(Actions.WANNA_PLAY) && game.IsAt(GamePhase.Init) ){
+    		logger.info(">>> " + p + " wants to play." );
     		result = game.AddPlayer(agName);
     	} else if(functor.equals(Actions.VOTE_LEADER) && game.IsAt(GamePhase.LeaderSelection)){
     		String candidateLeader = ((Atom)terms.get(0)).toString();
+    		logger.info(">>> " + p + " has voted " + candidateLeader);
     		result = game.Vote(agName, candidateLeader);
     	} else if(functor.equals(Actions.SELECT_HOSTAGE) && game.IsAt(GamePhase.HostageSelection)){
     		String hostage = ((Atom)terms.get(0)).toString();
+    		logger.info(">>> " + p + " selected hostage " + hostage);
     		result = game.SelectHostage(p, hostage);
     	} else if(functor.equals(Actions.OK_I_AM_DONE) && game.IsAt(GamePhase.Interaction)){
+    		logger.info("<<<<<<<<<<<<<<<<<<<<< " + p + " is done for its turn");
+    		Player playerOfTurn = game.getTurnForRoom(p.getRoom()).currentTurn();
     		result = game.advanceTurnInRoom(p.getRoom());	
+    		logger.info("<<<<<<<<<<<<<<<<<<<<< " + p + " has shifted to next");
     	}
 
     	// only if action completed successfully, update agents' percepts
@@ -149,6 +160,8 @@ public class Env extends Environment implements Observer {
 					logger.info("Update from game: complete phase SETUP for round " + game.round);
 
 					removePerceptsByUnif(Literal.parseLiteral("room(_,_)[source(_)]"));					
+					removePerceptsByUnif(Literal.parseLiteral("round(_)[source(_)]"));	
+					addPercept(Literal.parseLiteral("round("+game.round+")"));
 					
 					for(Player p : game.players){
 						removePerceptsByUnif(p.getName(), Literal.parseLiteral("my_role(_,_)[source(_)]"));
@@ -184,15 +197,14 @@ public class Env extends Environment implements Observer {
 		    			AddPerceptInRoom(room, literal);					
 		    		}
 		    		
-		    		//game.ProceedWithInteraction();
-		    		//new Timer().schedule(new EndInteractionTask(game), getInteractionTime(game.round));
-		    		
 		    		// Give a start to players!
 		    		removePerceptsByUnif(Literal.parseLiteral("phase(_)[source(_)]"));
 		    		addPercept(Literal.parseLiteral("phase(interaction)"));		 
+					
+		    		game.ProceedWithInteraction(); 
+		    		//new Timer().schedule(new EndInteractionTask(game), getInteractionTime(game.round));		    		
 		    		
-		    		game.ProceedWithInteraction();
-					break;
+		    		break;
 					/********************************************************/
 					/* INTERACTION PERFORMED */					
 				case Interaction:
@@ -223,23 +235,24 @@ public class Env extends Environment implements Observer {
 		else if(event instanceof NEXT_TURN){
 			NEXT_TURN turnev = (NEXT_TURN)event;
     		IRoom room = turnev.room;
-    		ITurn turn = turnev.turn;
+    		IPlayer player = turnev.player;
     		
     		Literal removeliteral = Literal.parseLiteral("turn(_)[source(_)]");
     		RemovePerceptInRoom(room, removeliteral);
     		
-    		Literal literal = Literal.parseLiteral("turn("+game.currentTurnInRoom(room).getName()+")");
+    		Literal literal = Literal.parseLiteral("turn("+player.getName()+")");
+    		logger.info("PROPAGATING NEW TURN IN " + room + " => turn to " + player);
 		    AddPerceptInRoom(room, literal);	
 		}
 	} // end update() method
 	
-	public void AddPerceptInRoom(IRoom room, Literal literal){
+	public synchronized void AddPerceptInRoom(IRoom room, Literal literal){
 		for(Player p : game.getPlayersInRoom(room)){
 			addPercept(p.getName(), literal);
 		}		
 	}
 	
-	public void RemovePerceptInRoom(IRoom room, Literal literal){
+	public synchronized void RemovePerceptInRoom(IRoom room, Literal literal){
 		for(Player p : game.getPlayersInRoom(room)){
 			removePerceptsByUnif(p.getName(), Literal.parseLiteral("turn(_)[source(_)]"));
 		}

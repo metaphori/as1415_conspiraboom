@@ -13,14 +13,14 @@ import java.util.logging.Logger;
 import proto1.game.impl.Player;
 import proto1.game.impl.PlayerRole;
 import proto1.game.impl.Room;
-import proto1.game.impl.Rooms;
 import proto1.game.impl.Team;
-import proto1.game.impl.TeamRoles;
-import proto1.game.impl.Teams;
 import proto1.game.impl.Turn;
 import proto1.game.interfaces.IPlayer;
 import proto1.game.interfaces.IRoom;
 import proto1.game.interfaces.ITurn;
+import proto1.game.kb.Rooms;
+import proto1.game.kb.TeamRoles;
+import proto1.game.kb.Teams;
 import utils.Tuple;
 
 public class Game extends Observable {			
@@ -243,23 +243,28 @@ public class Game extends Observable {
 	}
 	
 	public synchronized boolean advanceTurnInRoom(IRoom room){			
-		if(IsInteractionEnded()){
+		ITurn turn = room.equals(Rooms.ROOM1) ? turnForRoom1 : turnForRoom2;
+		
+		logger.info("advance compare " + room + " -- " + turn);
+		boolean end = IsInteractionEnded();
+		boolean hasnext = turn.hasNext();
+		if(end){
 			logger.info("NO MORE TURNS IN BOTH ROOMS => END INTERACTION");
 			this.EndInteraction();
-		} else{
-			ITurn turn = getTurnForRoom(room);
-			turn.next();
-			logger.info("TURN " + room + " ... " + turn);
+		} else if(hasnext){
+			logger.info("Getting next turn");
+			IPlayer player = turn.next();
+			logger.info("TURN " + room + " ... " + turn + " ===> " + player);
 			this.setChanged();
-			this.notifyObservers(new NEXT_TURN(room, turn));
+			this.notifyObservers(new NEXT_TURN(room, player));
 		}
+		
+		logger.info("advanced end :: " + end + ", " + hasnext);
 		
 		return true;
 	}
 	
 	protected synchronized boolean IsInteractionEnded(){
-		logger.info("Turn room1 " + turnForRoom1);
-		logger.info("Turn room2 " + turnForRoom2);
 		return !(turnForRoom1.hasNext() || turnForRoom2.hasNext());
 	}
 	
@@ -373,11 +378,11 @@ public class Game extends Observable {
 	}	
 	public class NEXT_TURN extends NotifyEvents {
 		public IRoom room;
-		public ITurn turn;
+		public IPlayer player;
 		
-		public NEXT_TURN(IRoom room, ITurn turn){
+		public NEXT_TURN(IRoom room, IPlayer player){
 			this.room = room;
-			this.turn = turn;
+			this.player = player;
 		}
 	}	
 }

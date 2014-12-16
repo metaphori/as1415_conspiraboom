@@ -1,4 +1,6 @@
-package proto1.game.impl;
+package proto1.game.kb;
+
+import proto1.game.impl.TeamRole;
 
 public class TeamRoles {
 	

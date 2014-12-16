@@ -22,21 +22,21 @@ public class Turn extends GameConcept implements ITurn {
 		return hasNextInThisRound() || hasNextRound();
 	}
 	public boolean hasNextInThisRound(){
-		return (k+1) < players.size();
+		return (k) < players.size();
 	}
 	
 	public boolean hasNextRound(){
-		return (round+1) < rounds;
+		return (round) < rounds;
 	}
 
 	public Player next() {
 		if(hasNextInThisRound()){
-			k++;
-			Player p = players.get(k);
+			Player p = players.get(k++);
 			return p;
 		} else if(hasNextRound()){
+			round++;
 			k=0;
-			Player p = players.get(0);
+			Player p = players.get(k++);
 			return p;
 		}
 		return null;
@@ -46,7 +46,7 @@ public class Turn extends GameConcept implements ITurn {
 	}
 
 	public Player currentTurn() {
-		return players.get(k);
+		return players.get(k-1);
 	}
 	
 	@Override

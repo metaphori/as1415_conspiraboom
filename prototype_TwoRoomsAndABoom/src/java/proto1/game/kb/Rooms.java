@@ -1,6 +1,8 @@
-package proto1.game.impl;
+package proto1.game.kb;
 
 import java.util.*;
+
+import proto1.game.impl.Room;
 
 public class Rooms {
 

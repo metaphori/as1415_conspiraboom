@@ -11,10 +11,10 @@ import proto1.env.Game.ROOM_PLACEMENT;
 import proto1.game.impl.Player;
 import proto1.game.impl.PlayerRole;
 import proto1.game.impl.Room;
-import proto1.game.impl.Rooms;
 import proto1.game.impl.Team;
-import proto1.game.impl.TeamRoles;
-import proto1.game.impl.Teams;
+import proto1.game.kb.Rooms;
+import proto1.game.kb.TeamRoles;
+import proto1.game.kb.Teams;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
 
@@ -133,23 +133,7 @@ public class EnvModel extends GridWorldModel implements Observer {
 		Game.NotifyEvents event = (Game.NotifyEvents)arg;
 		if(event instanceof Game.ROOM_PLACEMENT){
 			logger.info("Update from game: ROOM PLACEMENT");
-			for(Player p : g.players){
-				Room room = p.getRoom();
-				int agId = getAgentId(p);
-				
-				Location loc = getFreePositionInRoom(room);
-				
-				if(this.getAgPos(agId)==null){
-					logger.info("Adding "+p.getName()+"("+agId+") to pos ("+loc.x+","+loc.y+")");
-					//this.add(this.AGENT, loc.x, loc.y);
-					this.setAgPos(agId, loc.x, loc.y);
-				} else{
-					logger.info("Moving "+p.getName()+"("+agId+") to pos ("+loc.x+","+loc.y+")");
-					this.setAgPos(agId, loc.x, loc.y);
-				}
-				
-				view.update(loc.x, loc.y);
-			} // end for
+			PlacePlayersRandomlyInRespectiveRooms();
 		} // end ROOM_PLACEMENT
 		else if(event instanceof Game.NEW_LEADER){
 			logger.info("Update from game: NEW LEADER");
@@ -175,6 +159,26 @@ public class EnvModel extends GridWorldModel implements Observer {
 		}
 	}
 	
+	public void PlacePlayersRandomlyInRespectiveRooms(){
+		for(Player p : game.players){
+			Room room = p.getRoom();
+			int agId = getAgentId(p);
+			
+			Location loc = getFreePositionInRoom(room);
+			
+			if(this.getAgPos(agId)==null){
+				logger.info("Adding "+p.getName()+"("+agId+") to pos ("+loc.x+","+loc.y+")");
+				//this.add(this.AGENT, loc.x, loc.y);
+				this.setAgPos(agId, loc.x, loc.y);
+			} else{
+				logger.info("Moving "+p.getName()+"("+agId+") to pos ("+loc.x+","+loc.y+")");
+				this.setAgPos(agId, loc.x, loc.y);
+			}
+			
+			view.update(loc.x, loc.y);
+		} // end for		
+	}
+	
 	public void moveHostage(Player p){
 		/* Player p has changed room.
 		 * This has to reflect in the model.
@@ -185,6 +189,7 @@ public class EnvModel extends GridWorldModel implements Observer {
 		Location newPos = getFreePositionInRoom(p.getRoom());
 		moveAgentFromTo(agentId, currentPos, doorPosition);
 		moveAgentFromTo(agentId, doorPosition, newPos);
+		view.update();
 	}
 	
 	public enum Direction { LEFT, RIGHT, TOP, DOWN };

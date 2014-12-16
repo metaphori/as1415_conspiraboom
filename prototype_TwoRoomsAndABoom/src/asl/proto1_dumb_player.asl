@@ -34,14 +34,15 @@ room_mates(Rms) :- my_room(MyRoom) & .findall(P, room(P, MyRoom), Rms).
 	};	
 	.
 	
-+phase(interaction) <-
-	.print("Interaction phase");
-	.
++phase(interaction) <- true	.
 	
 +phase(hostages_exchange) : .my_name(Me) & room_leader(Me) <-
 	!choose_hostage(H);
 	select_hostage(H);
 	.	
+	
++turn(Who) : .my_name(Me) & Who==Me <- 
+	ok_i_am_done.	
 	
 +!choose_hostage(Hostage) <-
 	?room_mates(Rms);
