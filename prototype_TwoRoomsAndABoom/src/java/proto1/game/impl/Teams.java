@@ -1,4 +1,4 @@
-package proto1.game;
+package proto1.game.impl;
 
 public class Teams {
 

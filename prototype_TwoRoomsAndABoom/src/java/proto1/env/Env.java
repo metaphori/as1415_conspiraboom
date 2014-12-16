@@ -12,10 +12,10 @@ import java.util.TimerTask;
 import java.util.logging.*;
 
 import proto1.env.Game.GamePhase;
-import proto1.game.Player;
-import proto1.game.Room;
-import proto1.game.Rooms;
-import proto1.game.Team;
+import proto1.game.impl.Player;
+import proto1.game.impl.Room;
+import proto1.game.impl.Rooms;
+import proto1.game.impl.Team;
 
 public class Env extends Environment implements Observer {
 
@@ -67,7 +67,6 @@ public class Env extends Environment implements Observer {
 
     public void updatePercepts(){
     }
-
 
     @Override
     public boolean executeAction(String agName, Structure action) {
@@ -151,8 +150,8 @@ public class Env extends Environment implements Observer {
 						// agent-specific percepts
 		    			addPercept(p.getName(), Literal.parseLiteral("my_room("+p.getRoom().getName()+")"));
 		    			addPercept(p.getName(), 
-		    					Literal.parseLiteral("my_role("+p.getTeamRole().getTeam().getName()+","
-		    							+p.getTeamRole().getRole().getName()+")"));
+		    					Literal.parseLiteral("my_role("+p.getRole().getTeam().getName()+","
+		    							+p.getRole().getTeamRole().getName()+")"));
 		    		}   
 					
 		    		// Give a start to players!!!

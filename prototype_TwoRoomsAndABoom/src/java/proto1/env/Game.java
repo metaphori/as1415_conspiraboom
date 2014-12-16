@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Observable;
 import java.util.logging.Logger;
 
-import proto1.game.Player;
-import proto1.game.Roles;
-import proto1.game.Room;
-import proto1.game.Rooms;
-import proto1.game.Team;
-import proto1.game.TeamRole;
-import proto1.game.Teams;
+import proto1.game.impl.Player;
+import proto1.game.impl.PlayerRole;
+import proto1.game.impl.Room;
+import proto1.game.impl.Rooms;
+import proto1.game.impl.Team;
+import proto1.game.impl.TeamRoles;
+import proto1.game.impl.Teams;
 
 public class Game extends Observable {			
 	
@@ -197,8 +197,8 @@ public class Game extends Observable {
 	}
 	
 	protected synchronized void AssignRoles(){
-		List<TeamRole> rolesToAssign = GenerateRoles(num_players);
-		Hashtable<Player, TeamRole> roleAssignments = utils.Utils.RandomMatch(players, rolesToAssign);
+		List<PlayerRole> rolesToAssign = GenerateRoles(num_players);
+		Hashtable<Player, PlayerRole> roleAssignments = utils.Utils.RandomMatch(players, rolesToAssign);
 		for(Player p : roleAssignments.keySet()){
 			p.setRole(roleAssignments.get(p));
 		}
@@ -242,14 +242,14 @@ public class Game extends Observable {
 		}
 	}
 	
-	public static List<TeamRole> GenerateRoles(int num_players){
-		List<TeamRole> result = new ArrayList<TeamRole>();
-		result.add(new TeamRole(Teams.BLUES, Roles.PRESIDENT));
-		result.add(new TeamRole(Teams.REDS, Roles.BOMBER));
+	public static List<PlayerRole> GenerateRoles(int num_players){
+		List<PlayerRole> result = new ArrayList<PlayerRole>();
+		result.add(new PlayerRole(Teams.BLUES, TeamRoles.PRESIDENT));
+		result.add(new PlayerRole(Teams.REDS, TeamRoles.BOMBER));
 		
 		for(int i=2; i<num_players; i+=2){
-			result.add(new TeamRole(Teams.BLUES, Roles.NORMAL));
-			result.add(new TeamRole(Teams.REDS, Roles.NORMAL));
+			result.add(new PlayerRole(Teams.BLUES, TeamRoles.NORMAL));
+			result.add(new PlayerRole(Teams.REDS, TeamRoles.NORMAL));
 		}
 		
 		return result;
@@ -284,17 +284,17 @@ public class Game extends Observable {
 	}
 	
 	public synchronized Team getWinner() {
-		TeamRole presidentRole = new TeamRole(Teams.BLUES, Roles.PRESIDENT);
-		TeamRole bomberRole = new TeamRole(Teams.REDS, Roles.BOMBER);
+		PlayerRole presidentRole = new PlayerRole(Teams.BLUES, TeamRoles.PRESIDENT);
+		PlayerRole bomberRole = new PlayerRole(Teams.REDS, TeamRoles.BOMBER);
 		Player president = null, bomber=null;
 		logger.info("President role = " + presidentRole);
 		logger.info("Bomber role = " + bomberRole);
 		for(Player p : players){
-			if(p.getTeamRole().equals(presidentRole)){
+			if(p.getRole().equals(presidentRole)){
 				president = p;
 				logger.info("Got president => " + p);
 			}
-			if(p.getTeamRole().equals(bomberRole)){
+			if(p.getRole().equals(bomberRole)){
 				bomber = p;
 				logger.info("Got bomber => " + p);
 			}

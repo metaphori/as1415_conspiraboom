@@ -1,6 +1,8 @@
-package proto1.game;
+package proto1.game.impl;
 
-public class GameConcept {
+import proto1.game.interfaces.IGameConcept;
+
+public class GameConcept implements IGameConcept {
 	
 	protected String name;
 	

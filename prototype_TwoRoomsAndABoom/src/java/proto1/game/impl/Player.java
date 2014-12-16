@@ -1,11 +1,13 @@
-package proto1.game;
+package proto1.game.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player extends GameConcept {
+import proto1.game.interfaces.IPlayer;
 
-	protected TeamRole role;
+public class Player extends GameConcept implements IPlayer {
+
+	protected PlayerRole role;
 	protected Room room;
 	public final int AGENT_ID = GetNextAgentId();
 	
@@ -14,10 +16,10 @@ public class Player extends GameConcept {
 		//internal registry: //Player.players.add(this);
 	}
 	
-	public void setRole(TeamRole role){
+	public void setRole(PlayerRole role){
 		this.role = role;
 	}
-	public TeamRole getTeamRole(){ return this.role; }
+	public PlayerRole getRole(){ return this.role; }
 	
 	public void setRoom(Room room){
 		this.room = room;

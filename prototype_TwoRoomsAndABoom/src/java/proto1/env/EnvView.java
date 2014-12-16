@@ -8,9 +8,9 @@ import java.util.logging.Logger;
 
 import javax.swing.JPanel;
 
-import proto1.game.Player;
-import proto1.game.Role;
-import proto1.game.Roles;
+import proto1.game.impl.Player;
+import proto1.game.impl.TeamRole;
+import proto1.game.impl.TeamRoles;
 import sun.font.FontScaler;
 import jason.environment.grid.GridWorldView;
 
@@ -48,9 +48,9 @@ public class EnvView extends GridWorldView {
 		int agId = hmodel.getAgAtPos(x, y);
 		Player p = hmodel.getPlayerById(id);
 		
-		if(p.getTeamRole().getRole().equals(Roles.PRESIDENT)){
+		if(p.getRole().getTeamRole().equals(TeamRoles.PRESIDENT)){
 			c = Color.BLUE;
-		} else if(p.getTeamRole().getRole().equals(Roles.BOMBER)){
+		} else if(p.getRole().getTeamRole().equals(TeamRoles.BOMBER)){
 			c = Color.RED;
 		} else{
 			c = Color.GRAY;

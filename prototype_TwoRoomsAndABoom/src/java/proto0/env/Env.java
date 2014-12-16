@@ -6,8 +6,8 @@ import jason.environment.*;
 import java.util.List;
 import java.util.logging.*;
 
-import proto1.game.Player;
-import proto1.game.Rooms;
+import proto1.game.impl.Player;
+import proto1.game.impl.Rooms;
 
 public class Env extends Environment {
 
