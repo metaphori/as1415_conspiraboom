@@ -26,12 +26,11 @@ At the end of each round, some players (i.e., the hostages) will be swapped into
 If the Red Team's Bomber is in the same room as the President at the end of the game, 
  then the Red Team wins; otherwise the Blue Team wins. Lying encouraged.
 
-## Why is this game funny?
+### Why is this game funny?
 
 **Two Rooms and a Boom** entertains its players by making them interact in a **socially dynamic context
  where *competition*, *cooperation*, and *unpredictability* play a key role**.
- People stay puzzled: ``is he a team-mate or an enemy?'', ``what's her strategy?'', ``what's the deep reason for his actions?'', 
- ``what's happening in the other room?'', ``what happens if I do this?'' 
+ People stay puzzled: ``is he a team-mate or an enemy?``, ``what's her strategy``, ``what's the deep reason for his actions?``,  ``what's happening in the other room?``, ``what happens if I do this?`` 
 
 Interaction has *no rules*; the only regulations that apply are those of your national legal system: 
  players can lie, break agreements, remain silent, mix truth and falsehood, steal one's card, and so on.
@@ -42,12 +41,12 @@ Interaction has *no rules*; the only regulations that apply are those of your na
 Other characteristics that might contribute to the comical dimension follows:
 - The game is *short* and doesn't require complex setups
 - Each execution is *potentially different* from the others
- - The game is also very *extensible/customizable* to support a variety of new situations or to adapt it to generate more enjoyable scenarios
+- The game is also very *extensible/customizable* to support a variety of new situations or to adapt it to generate more enjoyable scenarios
 
-## Why is this game relevant within the Autonomous Systems course?*
+### Why is this game relevant within the Autonomous Systems course?
 
-Basically, as many other games, **Two Rooms and a Boom* builds on the *autonomy* of its actors (players) to be 
-  interesting and enjoyable*. In fact, a good player should be capable of *self-government* and self-protection 
+Basically, as many other games, _Two Rooms and a Boom_ builds on the _autonomy_ of its actors (players) to be 
+  interesting and enjoyable. In fact, a good player should be capable of *self-government* and self-protection 
   against the *influence* of other players (which might try to manipulate it).
  Note that one player's autonomy does not just need to be preserved against opponents, but also against team-mates 
   which might suggest uneffective strategies or communicate biased information.
@@ -62,8 +61,9 @@ Also, it's important for a player to be able to *predict* (with a certain *confi
  In doing so, one could reason by asking himself: ``what are their *intentions*? what do they *believe* about me?'' 
  (cf. intentional stance).
 
-Another reason for which players should have strong *executive* autonomy\footnote{Note that nothing prevents 
- the players to exhibit *motivational* autonomy as commonly the actual (meta-)goal -- in most of the games -- is to simply enjoy.*
+<!-- \footnote{Note that nothing prevents 
+ the players to exhibit *motivational* autonomy as commonly the actual (meta-)goal -->
+Another reason for which players should have strong *executive* autonomy -- in most of the games -- is to simply enjoy.
  and intelligence lies in the fact that each player is *responsible* in respect to all the team-mates. 
  That is, any ``stupid'' action might offend the entire team.
 
@@ -71,7 +71,7 @@ The competition is ruled so as to foster two *conflicting (sub-)goals*.
  As information potentially represent a competitive advantage, on one side, the less information is given to opponents, the lower
   will be their ability to take profitable decisions. On the other side, the more information is spread across the team,
   the better chance to perform well.
-% In the continuum of the dichotomy between conservative and hazardous behaviors, it's usually 
+<!-- In the continuum of the dichotomy between conservative and hazardous behaviors, it's usually -->
 
 When a player discovers one or more of its team-mates, things get interesting as they can exchange information and
  *cooperatively* build strategies. In particular, a *team-level strategy* could be defined (e.g., 
@@ -84,10 +84,9 @@ In a nutshell, **this game exhibits a complexity and characteristics that make i
  within the conceptual framework developed in the context of the Autonomous Systems course**.
  
 
-# Analysis
+## Analysis
 
-
-## Elements
+### Elements
 
  - 2 Teams: blues and reds
  - N Players per team
@@ -114,13 +113,11 @@ In a nutshell, **this game exhibits a complexity and characteristics that make i
     
  - $R$ rounds
  - Phases
-    [ref={Phase \arabic**]
       - Setup: assignment of a pair (team, role) for each member; equally-sized random distribution of players into the two rooms
       - Round
         - Room leader selection
         - Interaction
         - Exchange of hostages (as decided by the room leaders)
-    
       - End of game or back to Round if $num\_rounds < R$
     
  - Rules
@@ -134,7 +131,7 @@ In a nutshell, **this game exhibits a complexity and characteristics that make i
 
 
 
-## Actions
+### Actions
 
 An *action* is any interaction, performed by an a player, which potentially has an effect on the world, that is, on the other players
  or on the game.
@@ -144,53 +141,38 @@ There are two kinds of actions:
  1. Communication actions
  2. Game-related actions
 
-
 While communication actions can be performed in any game phase, other actions are specific to a given phase. 
  So, doing actions at the wrong time will simply make them fail.
  
 Phase or context-specific actions include:
 
-
- - Room leader selection
- 
+- Room leader selection
   - Vote
- 
-
- - Interaction
- 
+- Interaction
   - Co-reveal 
   - Colour-reveal
- 
- 
- - Hostages exchange
- 
+- Hostages exchange
   - (Only for room leaders) Selection of hostages
  
 
 
 
-**Communication actions*
+**Communication actions.**
 
 The game is very free for what concerns the interactions that can take place.
 
 However, typical communications include:
 
 
- - General
- 
+- General
   - Ask X for some information
   - Tell some information to X
- 
-
- - Interaction
- 
+- Interaction
   - Ask X to co-/colour-reveal 
   - Accept/reject to co-/colour-reveal
  
 
-
-
-## Reasoning*
+### Reasoning
 
 Typically, complex practical and epistemic reasoning is carried out by players.
 
@@ -203,16 +185,16 @@ The reasoning process has the following characteristics:
 
 The following are examples of reasoning.
 
-**Epistemic reasoning*
+**Epistemic reasoning**
 
-\begin{tabular*{ | l | l | *
-  \hline
-  **Given* & **Inferred knowledge* \\
-  \hline
-  (i) The number of players & The probability of player P to have role R \\ 
-  (ii) The distribution of roles in a team & \\ 
-  (iii) The roles of a subset of players & \\
-  \hline
+|  **Given**                              |  **Inferred knowledge*                          |
+|-----------------------------------------|-------------------------------------------------|
+| (i) The number of players               | The probability of player P to have role R      |
+| (ii) The distribution of                |                                                 | 
+| roles  in a team                        |                                                 |
+| (iii) The roles of a subset of player   |                                                 |
+---------------------------------------------------------------------------------------------
+
   (i) Player X asks me to co-reveal & \texttt{X = president/bomber* is quite probable. \\
   %\footnote{NOTE: a smart player may ask to co-reveal but then not do it.* \\
   (ii) I don't know his/her role & \\
