@@ -1,0 +1,17 @@
+MAS prototype_TwoRoomsAndABoom {
+
+	infrastructure: Centralised
+
+	environment: proto1.env.Env(6, gui)
+
+	agents:
+		roby 	proto1_dumb_player;
+		marco 	proto1_player agentClass proto1.agent.PlayerAgent agentArchClass proto1.agent.PlayerAgentArch;
+		ste 	proto1_player;
+		fede 	proto1_player;
+		fanny 	proto1_player;
+		vale 	proto1_player;
+
+	aslSourcePath:
+		"src/asl";
+}
