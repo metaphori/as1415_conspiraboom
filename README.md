@@ -200,40 +200,21 @@ The following are examples of reasoning.
 
 **Epistemic reasoning**
 
-|  **Given**                              |  **Inferred knowledge*                          |
-|-----------------------------------------|-------------------------------------------------|
-| i. The number of players <br /> ii. The distribution of roles  in a team <br /> iii. The roles of a subset of player | The probability of player P to have role R                                                
-
-
-  (i) Player X asks me to co-reveal & \texttt{X = president/bomber* is quite probable. \\
-  %\footnote{NOTE: a smart player may ask to co-reveal but then not do it.* \\
-  (ii) I don't know his/her role & \\
-  \hline
-  (i) A team-mate tells me some information & That information is true. \\
-  \hline
-  ... & ... \\
-  \hline
-\end{tabular*
+|  **Given**                              |  **Inferred knowledge**                         |
+|---------------------------------------- | ------------------------------------------------|
+i. The number of players <br /> ii. The distribution of roles  in a team <br /> iii. The roles of a subset of player | The probability of player P to have role R
+(i) Player X asks me to co-reveal <br /> (ii) I don't know his/her role | (X = president/bomber) is quite probable. 
+(i) A team-mate tells me some information & That information is true. | ...
 
 **Practical reasoning*
 
-\begin{tabular*{ | l | l | *
-  \hline
-  **Given* & **Inferred action* \\
-  \hline
-  (i) Me and my team-mates have decided that X has to be voted  & Vote X \\ 
-  \hline
-  (i) I am the room leader and a red player & Send the bomber to the other room based on \\
-  (ii) It is the last round & the probability of the president to be sent here \\
-  (iii) The bomber is in this room &  \\
-  (iv) The president is in the other room & \\
-  \hline
-  ... & ... \\
-  \hline
-\end{tabular*
+|  **Given**                              |  **Inferred action**                         |
+|---------------------------------------- | ------------------------------------------------|
+(i) Me and my team-mates have decided that X has to be voted  |  Vote X
+(i) I am the room leader and a red player & Send the bomber to the other room based on <br /> (ii) It is the last round & the probability of the president to be sent here <br /> (iii) The bomber is in this room <br /> (iv) The president is in the other room | ...
+
  
- 
-# Technical requirements*
+# Technical requirements
 
 The analysis pointed out many features of the game. 
 
@@ -265,12 +246,12 @@ In addition to such aspects, we should be able to express the following features
 
 
 
-# Feasibility analysis*
+# Feasibility analysis
 
 A question that must be addressed is: **can we build, with *reasonable* effort, a computer program that is able to play 
- this game *effectively*?*
+ this game *effectively*? **
  
-Of course, the answer depends on the meaning of ``reasonable'' and ``effectively''.
+Of course, the answer depends on the meaning of "reasonable" and "effectively".
  
 At a first sight, *Two Rooms and a Boom* is a game that just *seems* unplayable by computers\footnote{``You insist that there is something that a machine can't do. If you will tell me precisely what it is that a machine cannot do, then I can always make a machine which will do just that.'' (Von Neumann)*. 
 
@@ -284,11 +265,11 @@ Human players try to do their best to conceal information, misguide supposed ene
  
  - *Theoretical feasibility of reasoning*: relating to decidability issues in ontological/probabilistic reasoning
  - *Practical feasibility of reasoning*: relating to complexity and time constraints 
- - *``Turing-test'' feasibility*: can we build agents that are able to play this game just like humans do?
+ - *"Turing-test" feasibility*: can we build agents that are able to play this game just like humans do?
  - *Project feasibility*: can we build a system of acceptable quality within reasonable time/effort constraints?
 
 
-The ``plain vanilla'' game seems to be too unconstrained (free of rules). 
+The "plain vanilla" game seems to be too unconstrained (free of rules). 
  As a consequence, the game designers have the burden to codify anything the players can talk about.
  
 So, we should think about the possibility of shaping/restricting the game so as to find a *trade-off*
