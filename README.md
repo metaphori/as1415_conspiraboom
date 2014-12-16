@@ -3,11 +3,11 @@ ConspiraBoom
 
 ![](https://s3.amazonaws.com/ksr/assets/001/246/367/227afc2451d4c065a1be69d50dee1a0b_large.png?1382926817)
 
-Image taken from https://www.kickstarter.com/projects/gerdling/two-rooms-and-a-boom
-
 ## Introduction
 
-### What: The Game
+**_ConspiraBoom_ is a socio-technical game ** that draws strong inspiration from _Two Rooms and a Boom_ (See more here: https://www.kickstarter.com/projects/gerdling/two-rooms-and-a-boom).
+
+### Two Rooms and a Boom
 
 **The short story.** _Two Rooms and a Boom_ is a competitive, team-based, social deduction party game
  set in two rooms where hostages are exchanged at each round. The (initially mutually extraneous) players in the rooms interact 
@@ -32,7 +32,7 @@ If the Red Team's Bomber is in the same room as the President at the end of the 
  where *competition*, *cooperation*, and *unpredictability* play a key role**.
  People stay puzzled: ``is he a team-mate or an enemy?``, ``what's her strategy``, ``what's the deep reason for his actions?``,  ``what's happening in the other room?``, ``what happens if I do this?`` 
 
-Interaction has *no rules*; the only regulations that apply are those of your national legal system: 
+Essentially, interaction has *no rules*; the only regulations that apply are those of your national legal system: 
  players can lie, break agreements, remain silent, mix truth and falsehood, steal one's card, and so on.
 
  Moreover, *the fear of being discovered, the cleverness of the competition, the unexpected and the hazard stimulate emotions 
@@ -62,8 +62,8 @@ Also, it's important for a player to be able to *predict* (with a certain *confi
  (cf. intentional stance).
 
 <!-- \footnote{Note that nothing prevents 
- the players to exhibit *motivational* autonomy as commonly the actual (meta-)goal -->
-Another reason for which players should have strong *executive* autonomy -- in most of the games -- is to simply enjoy.
+ the players to exhibit *motivational* autonomy as commonly the actual (meta-)goal -- in most of the games -- is to simply enjoy -->
+Another reason for which players should have strong *executive* autonomy.
  and intelligence lies in the fact that each player is *responsible* in respect to all the team-mates. 
  That is, any ``stupid'' action might offend the entire team.
 
@@ -85,6 +85,19 @@ In a nutshell, **this game exhibits a complexity and characteristics that make i
  
 
 ## Analysis
+
+### Glossary
+
+**Term** | **Informal definition**
+---------------------------------
+Player    | Autonomous entity that plays the game
+Team      | Collection of players
+Role      | Set of rules and properties assigned to a player
+Team role | Particular role in a team
+Room role | Particular role in a room
+Action    | Move from a player 
+Strategy  | Coordinated set of mappings from contexts to actions
+---------------------------------
 
 ### Elements
 
@@ -189,11 +202,8 @@ The following are examples of reasoning.
 
 |  **Given**                              |  **Inferred knowledge*                          |
 |-----------------------------------------|-------------------------------------------------|
-| (i) The number of players               | The probability of player P to have role R      |
-| (ii) The distribution of                |                                                 | 
-| roles  in a team                        |                                                 |
-| (iii) The roles of a subset of player   |                                                 |
----------------------------------------------------------------------------------------------
+| i. The number of players <br /> ii. The distribution of roles  in a team <br /> iii. The roles of a subset of player | The probability of player P to have role R                                                
+
 
   (i) Player X asks me to co-reveal & \texttt{X = president/bomber* is quite probable. \\
   %\footnote{NOTE: a smart player may ask to co-reveal but then not do it.* \\
