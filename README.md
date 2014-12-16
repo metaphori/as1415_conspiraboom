@@ -88,8 +88,8 @@ In a nutshell, **this game exhibits a complexity and characteristics that make i
 
 ### Glossary
 
-**Term** | **Informal definition**
----------------------------------
+**Term**  | **Informal definition**
+--------- | -----------------------
 Player    | Autonomous entity that plays the game
 Team      | Collection of players
 Role      | Set of rules and properties assigned to a player
