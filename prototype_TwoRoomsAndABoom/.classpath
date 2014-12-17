@@ -5,5 +5,6 @@
 	<classpathentry kind="src" path="src/java"/>
 	<classpathentry excluding="asl/|java/" kind="src" path="src"/>
 	<classpathentry kind="lib" path="/p/Jason-1.4.1/lib/jason.jar"/>
+	<classpathentry kind="lib" path="libs/commons-math3-3.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

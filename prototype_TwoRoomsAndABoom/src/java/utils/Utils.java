@@ -4,8 +4,12 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.commons.math3.random.RandomDataGenerator;
+
 public class Utils {
 	
+	//public static final RandomDataGenerator random = new RandomDataGenerator();
+
 	public static <K,V> Hashtable<K, V> RandomMatch(List<K> lst1, List<V> lst2){
 		Hashtable<K, V> hash = new Hashtable<K, V>();
 		Random random = new Random();

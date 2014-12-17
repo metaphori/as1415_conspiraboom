@@ -81,9 +81,8 @@ public class Env extends Environment implements Observer {
     	Player p = game.getPlayerFromName(agName);
     	
     	if(functor.equals(Actions.DELEGATE_TO_HUMAN)){
-    		String str = UserCommandFrame.AskCommandToUser("Phase: " + game.state);
+    		String str = UserCommandFrame.AskCommandToUser("Player: " + p.getName() + " - Phase: " + game.state);
     		act = Structure.parseLiteral(str);
-    		logger.info("ACTION RESULT: " + act);
     	} 
     	
     	terms = act.getTerms();
@@ -98,13 +97,10 @@ public class Env extends Environment implements Observer {
     		result = game.Vote(agName, candidateLeader);
     	} else if(functor.equals(Actions.SELECT_HOSTAGE) && game.IsAt(GamePhase.HostageSelection)){
     		String hostage = ((Atom)terms.get(0)).toString();
-    		logger.info(">>> " + p + " selected hostage " + hostage);
     		result = game.SelectHostage(p, hostage);
     	} else if(functor.equals(Actions.OK_I_AM_DONE) && game.IsAt(GamePhase.Interaction)){
-    		logger.info("<<<<<<<<<<<<<<<<<<<<< " + p + " is done for its turn");
     		Player playerOfTurn = game.getTurnForRoom(p.getRoom()).currentTurn();
     		result = game.advanceTurnInRoom(p.getRoom());	
-    		logger.info("<<<<<<<<<<<<<<<<<<<<< " + p + " has shifted to next");
     	}
 
     	// only if action completed successfully, update agents' percepts
