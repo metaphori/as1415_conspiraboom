@@ -1,4 +1,4 @@
-package proto1.game.kb;
+package proto1.game.config;
 
 public class Actions {
 	//public static final String F_go_to_room = "go_to_room";

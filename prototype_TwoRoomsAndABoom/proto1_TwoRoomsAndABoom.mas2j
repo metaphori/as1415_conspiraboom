@@ -2,7 +2,7 @@ MAS prototype_TwoRoomsAndABoom {
 
 	infrastructure: Centralised
 
-	environment: proto1.env.Env(6, gui)
+	environment: proto1.env.Env(gui,6)
 
 	agents:
 		roby 	proto1_dumb_player; //proto1_human_player;

@@ -36,30 +36,31 @@ room_mates(Rms) :- my_room(MyRoom) & .findall(P, room(P, MyRoom), Rms).
 	.
 	*/
 
-@self_vote[prob(0.9)]	
+@self_vote[prob(0.5)]	
 +!decide_who_to_vote(Who) <- .my_name(Who).
 
-@vote_randomly[prob(0.1)] 
+@vote_randomly[prob(0.5)] 
 +!decide_who_to_vote(Who) <-
 	?room_mates(Rms);
 	.length(Rms, N);
 	proto0.actions.random_from_to(0,N,Rand);
 	.nth(Rand, Rms, Who);
-	.print("I'll vote ", Who, " by a brilliant random reasoning.")
+	//.print("I'll vote ", Who, " by a brilliant random reasoning.")
 	.	
 
 	
 +phase(interaction) <-
 	?round(R);
-	.print("Interaction phase (round",R,")");
+	//.print("Interaction phase (round",R,")");
 	.
 	
 +turn(Who) : .my_name(Me) & Who==Me <-
-	.print("Ehy, but it is my turn!!! :) :) :) ");
+	//.print("Ehy, but it is my turn!!! :) :) :) ");
 	ok_i_am_done
 	.
 	
-+turn(Who) : .my_name(Me) & Who\==Me <- .print("It's not my turn'").
++turn(Who) : .my_name(Me) & Who\==Me <- //.print("It's not my turn'")
+	true.
 	
 +phase(hostages_exchange) : .my_name(Me) & room_leader(Me) <-
 	!choose_hostage(H);
@@ -71,5 +72,5 @@ room_mates(Rms) :- my_room(MyRoom) & .findall(P, room(P, MyRoom), Rms).
 	.length(Rms, N);
 	proto0.actions.random_from_to(0,N,Rand);
 	.nth(Rand, Rms, Hostage);
-	.print("I've chosen my hostage =>", Hostage );
+	//.print("I've chosen my hostage =>", Hostage );
 	.

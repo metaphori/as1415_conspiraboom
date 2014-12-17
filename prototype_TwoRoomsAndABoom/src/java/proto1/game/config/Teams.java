@@ -1,4 +1,4 @@
-package proto1.game.kb;
+package proto1.game.config;
 
 import proto1.game.impl.Team;
 

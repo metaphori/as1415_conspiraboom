@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.lang.reflect.InvocationTargetException;
 
-import proto1.game.kb.Actions;
+import proto1.game.config.Actions;
 
 public class UserCommandFrame /*extends JFrame implements ActionListener*/ {
 	/*

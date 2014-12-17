@@ -11,18 +11,23 @@ public class Turn extends GameConcept implements ITurn {
 	protected int k = 0;
 	
 	protected static int TURN_K = 0;
+
+	protected int nplayers = 0;
 	
 	public Turn(Collection<Player> players, int rounds){
 		super("turn"+(TURN_K++));
 		this.players = new ArrayList<Player>(players);
+		this.nplayers = players.size();
 		this.rounds = rounds;
+		this.k = 0;
+		this.round = 0;
 	}
 	
 	public boolean hasNext() {
 		return hasNextInThisRound() || hasNextRound();
 	}
 	public boolean hasNextInThisRound(){
-		return (k) < players.size();
+		return this.k < nplayers;
 	}
 	
 	public boolean hasNextRound(){
@@ -35,8 +40,8 @@ public class Turn extends GameConcept implements ITurn {
 			return p;
 		} else if(hasNextRound()){
 			round++;
-			k=0;
-			Player p = players.get(k++);
+			this.k=0;
+			Player p = players.get(this.k++);
 			return p;
 		}
 		return null;
@@ -46,11 +51,11 @@ public class Turn extends GameConcept implements ITurn {
 	}
 
 	public Player currentTurn() {
-		return players.get(k-1);
+		return players.get(this.k-1);
 	}
 	
 	@Override
 	public String toString(){
-		return this.getName() + "[" + k + "/" + players.size() + ", round=" + round + "/"+rounds+"]";
+		return this.getName() + "[" + this.k + "/" + players.size() + ", round=" + round + "/"+rounds+"]";
 	}
 }

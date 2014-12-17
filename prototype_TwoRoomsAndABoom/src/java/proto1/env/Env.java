@@ -14,6 +14,8 @@ import java.util.logging.*;
 
 import proto1.env.Game.GamePhase;
 import proto1.env.Game.NEXT_TURN;
+import proto1.game.config.Actions;
+import proto1.game.config.Rooms;
 import proto1.game.impl.Player;
 import proto1.game.impl.Room;
 import proto1.game.impl.Team;
@@ -21,8 +23,6 @@ import proto1.game.impl.Turn;
 import proto1.game.interfaces.IPlayer;
 import proto1.game.interfaces.IRoom;
 import proto1.game.interfaces.ITurn;
-import proto1.game.kb.Actions;
-import proto1.game.kb.Rooms;
 import proto1.gui.UserCommandFrame;
 import utils.Tuple;
 import utils.Utils;
@@ -51,15 +51,15 @@ public class Env extends Environment implements Observer {
         //addPercept(Literal.parseLiteral("percept(demo)"));
         
         int num_players = DEFAULT_NUM_PLAYERS;
-        if(args.length>=1){
-        	num_players = Integer.parseInt(args[0]);
+        if(args.length>=2){
+        	num_players = Integer.parseInt(args[1]);
         }
         
         this.game = new Game(num_players);
         this.game.addObserver(this);
         
         model = new EnvModel(this.game, SIZE);
-        if(args.length>=2 && args[1].equals("gui")){
+        if(args.length>=1 && args[0].equals("gui")){
         	view = new EnvView(model);
         	model.setView(view);
         }
@@ -71,7 +71,7 @@ public class Env extends Environment implements Observer {
     }
 
     @Override
-    public boolean executeAction(String agName, Structure action) {
+    public synchronized boolean executeAction(String agName, Structure action) {
     	boolean result = false;
 
     	Literal act = action;
@@ -89,7 +89,7 @@ public class Env extends Environment implements Observer {
     	functor = act.getFunctor();    	
     	
     	if(functor.equals(Actions.WANNA_PLAY) && game.IsAt(GamePhase.Init) ){
-    		logger.info(">>> " + p + " wants to play." );
+    		//logger.info(">>> " + p + " wants to play." );
     		result = game.AddPlayer(agName);
     	} else if(functor.equals(Actions.VOTE_LEADER) && game.IsAt(GamePhase.LeaderSelection)){
     		String candidateLeader = ((Atom)terms.get(0)).toString();
@@ -98,7 +98,7 @@ public class Env extends Environment implements Observer {
     	} else if(functor.equals(Actions.SELECT_HOSTAGE) && game.IsAt(GamePhase.HostageSelection)){
     		String hostage = ((Atom)terms.get(0)).toString();
     		result = game.SelectHostage(p, hostage);
-    	} else if(functor.equals(Actions.OK_I_AM_DONE) && game.IsAt(GamePhase.Interaction)){
+    	} else if(functor.equals(Actions.OK_I_AM_DONE) && game.IsAt(GamePhase.Interaction)){   		
     		Player playerOfTurn = game.getTurnForRoom(p.getRoom()).currentTurn();
     		result = game.advanceTurnInRoom(p.getRoom());	
     	}
@@ -110,6 +110,9 @@ public class Env extends Environment implements Observer {
 				Thread.sleep(100);
 			} catch (Exception e) {
 			}
+		}
+		else{
+			logger.info("EEEEEEEEEEEEEEHHHHH????????????????");
 		}
 		return result;
 		
@@ -125,7 +128,7 @@ public class Env extends Environment implements Observer {
     	
 		@Override
 		public void run() {
-			game.EndInteraction();	
+			game.StartSelectionOfHostages();	
 		}
     	
     }
@@ -137,7 +140,7 @@ public class Env extends Environment implements Observer {
         super.stop();
     }
 
-	public void update(Observable obj, Object arg) {
+	public synchronized void update(Observable obj, Object arg) {
 		Game game = (Game)obj;
 		Game.NotifyEvents event = (Game.NotifyEvents)arg;
 		if(event instanceof Game.GAME_PHASE_COMPLETED){
@@ -149,11 +152,11 @@ public class Env extends Environment implements Observer {
 				/* SETUP PERFORMED: roles and rooms have been assigned */
 				case Init:
 					clearAllPercepts();
-					logger.info("Update from game: complete phase INIT");
+					logger.info("COMPLETED: INIT");
 					game.SetupNewRound();
 					break;
 				case SetupRound:
-					logger.info("Update from game: complete phase SETUP for round " + game.round);
+					logger.info("COMPLETED: ROUND SETUP" + game.round);
 
 					removePerceptsByUnif(Literal.parseLiteral("room(_,_)[source(_)]"));					
 					removePerceptsByUnif(Literal.parseLiteral("round(_)[source(_)]"));	
@@ -183,7 +186,7 @@ public class Env extends Environment implements Observer {
 				/********************************************************/
 				/* LEADER SELECTION PERFORMED: both rooms have a leader */
 				case LeaderSelection:
-					logger.info("Update from game: complete phase LEADER SELECTION");
+					logger.info("COMPLETED: LEADER SELECTION");
 
 					// communicate leader to all room's players
 		    		for(Room room : Rooms.asList()){
@@ -204,7 +207,7 @@ public class Env extends Environment implements Observer {
 					/********************************************************/
 					/* INTERACTION PERFORMED */					
 				case Interaction:
-					logger.info("Update from game: complete phase INTERACTION");
+					logger.info("COMPLETED: INTERACTION");
 					removePerceptsByUnif(Literal.parseLiteral("phase(_)"));
 		    		addPercept(Literal.parseLiteral("phase(hostages_exchange)"));   					
 					break;
@@ -237,8 +240,8 @@ public class Env extends Environment implements Observer {
     		RemovePerceptInRoom(room, removeliteral);
     		
     		Literal literal = Literal.parseLiteral("turn("+player.getName()+")");
-    		logger.info("PROPAGATING NEW TURN IN " + room + " => turn to " + player);
-		    AddPerceptInRoom(room, literal);	
+    		logger.info("NEW TURN (" + room + ") TO " + player);
+		    AddPerceptInRoom(room, literal);
 		}
 	} // end update() method
 	

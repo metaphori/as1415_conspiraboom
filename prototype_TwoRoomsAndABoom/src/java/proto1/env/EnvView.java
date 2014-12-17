@@ -8,9 +8,9 @@ import java.util.logging.Logger;
 
 import javax.swing.JPanel;
 
+import proto1.game.config.TeamRoles;
 import proto1.game.impl.Player;
 import proto1.game.impl.TeamRole;
-import proto1.game.kb.TeamRoles;
 import sun.font.FontScaler;
 import jason.environment.grid.GridWorldView;
 
@@ -31,7 +31,7 @@ public class EnvView extends GridWorldView {
 	}
 	
 	@Override public void draw(Graphics g, int x, int y, int object){
-		System.out.println("draw");
+		//System.out.println("draw");
 		if(object==Env.DOOR){
 			g.setColor(Color.LIGHT_GRAY);
 			super.drawString(g, x, y, new Font("Arial", Font.BOLD, 16), "DOOR");

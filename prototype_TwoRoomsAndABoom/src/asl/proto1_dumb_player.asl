@@ -22,7 +22,7 @@ room_mates(Rms) :- my_room(MyRoom) & .findall(P, room(P, MyRoom), Rms).
 	if(A==0){
 		// myself
 		.my_name(Who); 
-		.print("I'll vote myself");
+		//.print("I'll vote myself");
 	} 
 	if(A==1){
 		// random
@@ -30,7 +30,7 @@ room_mates(Rms) :- my_room(MyRoom) & .findall(P, room(P, MyRoom), Rms).
 		.length(Rms, N);
 		proto0.actions.random_from_to(0,N,Rand);
 		.nth(Rand, Rms, Who);
-		.print("I'll vote ", Who, " by a brilliant random reasoning.");
+		//.print("I'll vote ", Who, " by a brilliant random reasoning.");
 	};	
 	.
 	
@@ -49,5 +49,5 @@ room_mates(Rms) :- my_room(MyRoom) & .findall(P, room(P, MyRoom), Rms).
 	.length(Rms, N);
 	proto0.actions.random_from_to(0,N,Rand);
 	.nth(Rand, Rms, Hostage);
-	.print("I've chosen my hostage =>", Hostage );
+	//.print("I've chosen my hostage =>", Hostage );
 	.

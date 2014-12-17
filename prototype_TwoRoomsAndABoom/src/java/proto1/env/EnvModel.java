@@ -8,13 +8,13 @@ import java.util.logging.Logger;
 import proto1.env.Game.NEW_LEADER;
 import proto1.env.Game.NotifyEvents;
 import proto1.env.Game.ROOM_PLACEMENT;
+import proto1.game.config.Rooms;
+import proto1.game.config.TeamRoles;
+import proto1.game.config.Teams;
 import proto1.game.impl.Player;
 import proto1.game.impl.PlayerRole;
 import proto1.game.impl.Room;
 import proto1.game.impl.Team;
-import proto1.game.kb.Rooms;
-import proto1.game.kb.TeamRoles;
-import proto1.game.kb.Teams;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
 
@@ -132,11 +132,11 @@ public class EnvModel extends GridWorldModel implements Observer {
 		Game g = (Game)o;
 		Game.NotifyEvents event = (Game.NotifyEvents)arg;
 		if(event instanceof Game.ROOM_PLACEMENT){
-			logger.info("Update from game: ROOM PLACEMENT");
+			//logger.info("Update from game: ROOM PLACEMENT");
 			PlacePlayersRandomlyInRespectiveRooms();
 		} // end ROOM_PLACEMENT
 		else if(event instanceof Game.NEW_LEADER){
-			logger.info("Update from game: NEW LEADER");
+			//logger.info("Update from game: NEW LEADER");
 			Player leader1 = Rooms.ROOM1.getLeader();
 			Player leader2 = Rooms.ROOM2.getLeader();
 			Player[] leaders = new Player[]{leader1, leader2};
@@ -150,7 +150,7 @@ public class EnvModel extends GridWorldModel implements Observer {
 				}
 			}
 		} else if(event instanceof Game.HOSTAGES_EXCHANGE){
-			logger.info("Update from game: HOSTAGES EXCHANGE");
+			//logger.info("Update from game: HOSTAGES EXCHANGE");
 			Game.HOSTAGES_EXCHANGE actualEv = (Game.HOSTAGES_EXCHANGE)event;
 			Player h1 = actualEv.h1;
 			Player h2 = actualEv.h2;
@@ -167,11 +167,11 @@ public class EnvModel extends GridWorldModel implements Observer {
 			Location loc = getFreePositionInRoom(room);
 			
 			if(this.getAgPos(agId)==null){
-				logger.info("Adding "+p.getName()+"("+agId+") to pos ("+loc.x+","+loc.y+")");
+				//logger.info("Adding "+p.getName()+"("+agId+") to pos ("+loc.x+","+loc.y+")");
 				//this.add(this.AGENT, loc.x, loc.y);
 				this.setAgPos(agId, loc.x, loc.y);
 			} else{
-				logger.info("Moving "+p.getName()+"("+agId+") to pos ("+loc.x+","+loc.y+")");
+				//logger.info("Moving "+p.getName()+"("+agId+") to pos ("+loc.x+","+loc.y+")");
 				this.setAgPos(agId, loc.x, loc.y);
 			}
 			
@@ -209,7 +209,7 @@ public class EnvModel extends GridWorldModel implements Observer {
 			}
 			this.setAgPos(agId, x, y);
 			try{
-				Thread.sleep(200);
+				Thread.sleep(0);
 			} catch(Exception exc){}
 		}
 	}

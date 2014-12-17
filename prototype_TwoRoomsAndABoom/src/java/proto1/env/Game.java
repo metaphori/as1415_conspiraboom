@@ -10,6 +10,9 @@ import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.logging.Logger;
 
+import proto1.game.config.Rooms;
+import proto1.game.config.TeamRoles;
+import proto1.game.config.Teams;
 import proto1.game.impl.Player;
 import proto1.game.impl.PlayerRole;
 import proto1.game.impl.Room;
@@ -18,9 +21,6 @@ import proto1.game.impl.Turn;
 import proto1.game.interfaces.IPlayer;
 import proto1.game.interfaces.IRoom;
 import proto1.game.interfaces.ITurn;
-import proto1.game.kb.Rooms;
-import proto1.game.kb.TeamRoles;
-import proto1.game.kb.Teams;
 import utils.Tuple;
 
 public class Game extends Observable {			
@@ -61,7 +61,7 @@ public class Game extends Observable {
 	
 	public synchronized boolean SelectHostage(Player chooser, String hostageName){
 		if(!chooser.getRoom().getLeader().equals(chooser)) { 
-			logger.info("ERROR ==> NOT LEADER: The room of " + chooser + " is " + chooser.getRoom() + " which has leader " +
+			logger.severe("ERROR ==> NOT LEADER: The room of " + chooser + " is " + chooser.getRoom() + " which has leader " +
 					chooser.getRoom().getLeader());
 			return false; 
 		}
@@ -69,10 +69,10 @@ public class Game extends Observable {
 		Player hostage = getPlayerFromName(hostageName);
 		Room room = chooser.getRoom();
 		if(room.equals(Rooms.ROOM1)){
-			logger.info("Set hostage from " + Rooms.ROOM1);
+			logger.info(chooser + " set hostage from " + Rooms.ROOM1);
 			hostageFromRoom1 = hostage;
 		} else if(room.equals(Rooms.ROOM2)){
-			logger.info("Set hostage from " + Rooms.ROOM2);
+			logger.info(chooser + " set hostage from " + Rooms.ROOM2);
 			hostageFromRoom2 = hostage;
 		}
 		
@@ -164,7 +164,7 @@ public class Game extends Observable {
 		}
 	}
 	
-	public synchronized void EndInteraction(){
+	public synchronized void StartSelectionOfHostages(){
 		this.state = GamePhase.HostageSelection;
 		
 		this.setChanged();
@@ -245,21 +245,18 @@ public class Game extends Observable {
 	public synchronized boolean advanceTurnInRoom(IRoom room){			
 		ITurn turn = room.equals(Rooms.ROOM1) ? turnForRoom1 : turnForRoom2;
 		
-		logger.info("advance compare " + room + " -- " + turn);
 		boolean end = IsInteractionEnded();
 		boolean hasnext = turn.hasNext();
 		if(end){
-			logger.info("NO MORE TURNS IN BOTH ROOMS => END INTERACTION");
-			this.EndInteraction();
+			this.StartSelectionOfHostages();
 		} else if(hasnext){
-			logger.info("Getting next turn");
 			IPlayer player = turn.next();
-			logger.info("TURN " + room + " ... " + turn + " ===> " + player);
 			this.setChanged();
 			this.notifyObservers(new NEXT_TURN(room, player));
+		} else{
+			logger.severe("I should not have received such a command -- " + room + ", "+turn.currentTurn() + 
+					" ... as " + end + " & " + hasnext);
 		}
-		
-		logger.info("advanced end :: " + end + ", " + hasnext);
 		
 		return true;
 	}
@@ -341,11 +338,9 @@ public class Game extends Observable {
 		for(Player p : players){
 			if(p.getRole().equals(presidentRole)){
 				president = p;
-				logger.info("Got president => " + p);
 			}
 			if(p.getRole().equals(bomberRole)){
 				bomber = p;
-				logger.info("Got bomber => " + p);
 			}
 		}
 		logger.info("President is in room " + president.getRoom());

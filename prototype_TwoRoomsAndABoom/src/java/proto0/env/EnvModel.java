@@ -4,12 +4,12 @@ import java.awt.Graphics;
 import java.util.*;
 import java.util.logging.Logger;
 
+import proto1.game.config.Rooms;
+import proto1.game.config.TeamRoles;
+import proto1.game.config.Teams;
 import proto1.game.impl.Player;
 import proto1.game.impl.PlayerRole;
 import proto1.game.impl.Room;
-import proto1.game.kb.Rooms;
-import proto1.game.kb.TeamRoles;
-import proto1.game.kb.Teams;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
 
