@@ -28,7 +28,7 @@ import jason.infra.jade.JadeEnvironment;
 public class EnvView extends GridWorldView {
 
 	EnvModel hmodel;
-	Env env;
+	Env env; 
 	
 	protected Logger logger = Logger.getLogger("View");	
 	
@@ -60,7 +60,7 @@ public class EnvView extends GridWorldView {
 	public void drawAgent(Graphics g, int x, int y, Color c, int id) {
 		IPlayer reference = hmodel.getPlayerById(0);
 		
-		super.drawString(g, 0,0, defaultFont, reference.getName());
+		super.drawString(g, 3,1, defaultFont, "Point of view: "+reference.getName());
 		
 		int agId = hmodel.getAgAtPos(x, y);
 		IPlayer p = hmodel.getPlayerById(id);

@@ -138,7 +138,8 @@ public class Env extends Environment implements Observer {
 	    			logger.info("Sblocking request");
 	    			return result;
 	    	} else{
-	    		logger.severe("°°°°°°°°°°°°°°°°°°°°°°°°°° action not recognized from " + p + ": "+ functor);
+	    		logger.severe("Action not recognized from " + p + ": "+ functor);
+	    		return true; // doing nothing
 	    	}
 	
 			return result;
@@ -325,21 +326,19 @@ public class Env extends Environment implements Observer {
 			removePerceptsByUnif(p.getName(), literal);
 		}
 	}
-	
-	public int getInteractionTime(int round){
-		return 1000;
-	}
     
-    public class EndInteractionTask extends TimerTask {
-    	private Game game;
+    public class EndTurnTaskTimer extends TimerTask {
+    	private Env env;
     	
-    	public EndInteractionTask(Game game){
-    		this.game = game;
+    	public EndTurnTaskTimer(Env env){
+    		this.env = env;
     	}
     	
 		@Override
 		public void run() {
-			game.StartSelectionOfHostages();	
+			synchronized(env){
+				env.notifyAll();
+			}
 		}
     	
     }	

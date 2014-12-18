@@ -10,14 +10,10 @@ num_mates_here(N) :- mates_here(L) & count(L, N).
 mates_here(MatesHere) :- 
 	players_here(Ps) & 
 	.findall(P, team_mate(P), Mates) & 
-	intersect(Ps, Mates, MatesHere).
+	iactions.intersect(Ps, Mates, MatesHere).
 
 /* Utils */
 
-intersect([], L, _).
-intersect(L, [], _).
-intersect([A|L1], [A|L2], I) :- Res=[A|I] & intersect(L1,L2,Res).
-intersect([A|L1], [B|L2], I) :- intersect(L1, L2, I).
 
 except([H|L], H, R) :- except(L, H, R).
 
@@ -38,25 +34,6 @@ count([H|T], N) :- count(T, K) & N=K+1.
 	vote(Who);
 	.
 
-/*
-+!decide_who_to_vote(Who) <-
-	proto0.actions.random_from_to(0,2,A);
-	if(A==0){
-		// myself
-		.my_name(Who); 
-		.print("I'll vote myself");
-	} 
-	if(A==1){
-		// random
-		?players_here(Rms);
-		.length(Rms, N);
-		proto0.actions.random_from_to(0,N,Rand);
-		.nth(Rand, Rms, Who);
-		.print("I'll vote ", Who, " by a brilliant random reasoning.");
-	};	
-	.
-	*/
-
 @self_vote[prob(0.7)]	
 +!decide_who_to_vote(Who) <- .my_name(Who).
 
@@ -67,7 +44,7 @@ count([H|T], N) :- count(T, K) & N=K+1.
 	.length(Rms, N);
 	proto0.actions.random_from_to(0,N,Rand);
 	.nth(Rand, Rms, Who);
-	//.print("I'll vote ", Who, " by a brilliant random reasoning.")
+	.print("I have no teammates here, I think I'll vote randomly'");
 	.
 
 +!decide_who_to_vote(Who) : mates_here(Mates) & count(Mates,N) & N>0 <-
@@ -100,9 +77,9 @@ count([H|T], N) :- count(T, K) & N=K+1.
 	!decide_about_request(What,From,Decision); 
 	Decision.
 	
-@req_risky[prob(0.1)]
+@req_risky[prob(0.2)]
 +!decide_about_request(co_reveal, X, ok) : my_role(_,president) | my_role(_,bomber).
-@req_consderv[prob(0.9)]
+@req_consderv[prob(0.8)]
 +!decide_about_request(co_reveal, X, no) : my_role(_,president) | my_role(_,bomber).
 
 @req_notrisky[prob(0.7)]
@@ -115,6 +92,64 @@ count([H|T], N) :- count(T, K) & N=K+1.
 	select_hostage(H);
 	.	
 	
++!choose_hostage(Hostage) : round(3) <-
+	?my_role(Team,Role);
+	?my_room(Room);
+	.my_name(Me);
+	!room_of(reds,bomber,BomberRoom);
+	!room_of(blues,president,PresidentRoom);
+	// If I am a blue leader and bomber and president are in the same room
+	// We'll simply win by moving one of them 
+	if(Team==blues & BomberRoom==PresidentRoom){
+		.print("(-___-) Bomber and president in same room. I'll save my president!!");
+		!get_player_here_of_role(reds, bomber, B);
+		if(B\==dont_know & room(B,Room)){
+			Hostage = B;
+		}
+	} else{
+		// If I am red and bomber/president are in different rooms,
+		// I might try by moving them to the other room
+		if(Team==reds & BomberRoom\==PresidentRoom){
+			.print("(--__--) Bomber and president in opposite rooms. I'll make them match!!!'");
+			!get_player_here_of_role(reds, bomber, B);
+			!get_player_here_of_role(blues, president, P);
+			if(B\==dont_know & room(B,Room)){
+				Hostage=B;
+			} else {
+				if(P\==dont_know & room(P,Room)){
+					Hostage=P;
+				} else{
+					Hostage=Me;
+				}
+			}
+		} else{
+			Hostage = Me
+		}
+	}.
+	
++!get_player_here_of_role(Team, Role, Who) <-
+	?players_here(Ps);
+	.print("Players here are ", Ps);
+	.findall(P, role(P, Team, Role), PlayersOfRole);
+	iactions.intersect(PlayersOfRole, Ps, Candidates);
+	.print("Candidates at role ", Role," are ", Candidates);
+	?count(Candidates,K);
+	if(K>0){
+		.nth(0, Candidates, Who);
+	} else{
+		Who = dont_know;
+	}.
++!room_of(Team,Role,Room) <-
+	.findall(P, role(P, Team, Role), PlayersOfRole);
+	?count(PlayersOfRole,K);
+	if(K>0){
+		.nth(0, PlayersOfRole, X);
+		room(X, Room);
+	} else{
+		Room = dont_know;
+	}.
+
+
 +!choose_hostage(Hostage) <-
 	?players_here(Rms);
 	.length(Rms, N);
@@ -122,3 +157,24 @@ count([H|T], N) :- count(T, K) & N=K+1.
 	.nth(Rand, Rms, Hostage);
 	//.print("I've chosen my hostage =>", Hostage );
 	.
+	
++role(Player, Team, Role)[source(percept)] <-
+	?my_role(MyTeam, _);
+	if(Team == MyTeam){
+		// take mental note: he is a team-mate :)
+		+team_mate(Player);
+		// let's share information!
+		.findall(role(Pbb, Tbb, Rbb), role(Pbb, Tbb, Rbb), Roless);
+		for(.member(R, Roless)){
+			.send(Player, tell, R);
+		};
+	}.
+
++role(Player, Team, Role)[source(OtherPlayer)] : team_mate(OtherPlayer) <-
+	.print("Thank you ", OtherPlayer, " for having shared your knowledge with me.");
+	?my_role(MyTeam, _);
+	if(Team == MyTeam){
+		// take mental note: he is a team-mate :)
+		+team_mate(Player);
+	}.
+	
