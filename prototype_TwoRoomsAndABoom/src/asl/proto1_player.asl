@@ -77,14 +77,14 @@ count([H|T], N) :- count(T, K) & N=K+1.
 	!decide_about_request(What,From,Decision); 
 	Decision.
 	
-@req_risky[prob(0.2)]
+@req_risky[prob(0.3)]
 +!decide_about_request(co_reveal, X, ok) : my_role(_,president) | my_role(_,bomber).
-@req_consderv[prob(0.8)]
+@req_consderv[prob(0.7)]
 +!decide_about_request(co_reveal, X, no) : my_role(_,president) | my_role(_,bomber).
 
-@req_notrisky[prob(0.7)]
+@req_notrisky[prob(0.5)]
 +!decide_about_request(co_reveal, X, ok) : my_role(Team,Role) & Role\==president & Role\==bomber.
-@req_notrisky_cons[prob(0.3)]
+@req_notrisky_cons[prob(0.5)]
 +!decide_about_request(co_reveal, X, no) : my_role(Team,Role) & Role\==president & Role\==bomber.
 
 +phase(hostages_exchange) : .my_name(Me) & room_leader(Me) <-
@@ -105,6 +105,8 @@ count([H|T], N) :- count(T, K) & N=K+1.
 		!get_player_here_of_role(reds, bomber, B);
 		if(B\==dont_know & room(B,Room)){
 			Hostage = B;
+		} else{
+			Hostage = Me;
 		}
 	} else{
 		// If I am red and bomber/president are in different rooms,

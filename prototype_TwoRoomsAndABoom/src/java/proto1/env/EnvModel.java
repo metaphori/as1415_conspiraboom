@@ -268,11 +268,9 @@ public class EnvModel extends GridWorldModel implements Observer {
 	}
 	
 	public void setWinner(Team team){
-		view.drawString(view.getGraphics(), size/2, size/2,
-				new Font(Font.SERIF, Font.BOLD, 30),
-				"WINNER => " + team.getName());
-		view.update(view.getGraphics());
-		view.repaint();
+		((EnvView)view).setWinner(team);
+		
+		PlacePlayersRandomlyInRespectiveRooms();
 	}
 	
 }

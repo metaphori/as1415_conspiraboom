@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javax.swing.JPanel;
 
 import proto1.game.config.RoomRoles;
+import proto1.game.config.Rooms;
 import proto1.game.config.TeamRoles;
 import proto1.game.config.Teams;
 import proto1.game.impl.Player;
@@ -27,10 +28,18 @@ import jason.infra.jade.JadeEnvironment;
 
 public class EnvView extends GridWorldView {
 
-	EnvModel hmodel;
-	Env env; 
+	protected Env env = null;
+	protected EnvModel hmodel = null;
+	
+	public Team winner = null;
+	
+	public void setWinner(Team winner){
+		this.winner = winner;
+	}
 	
 	protected Logger logger = Logger.getLogger("View");	
+	
+	Font bigFont = new Font("ARIAL", Font.BOLD, 40);
 	
 	public EnvView(EnvModel model, Env env){
 		super(model, "Two Rooms and a Boom", 500);
@@ -60,7 +69,7 @@ public class EnvView extends GridWorldView {
 	public void drawAgent(Graphics g, int x, int y, Color c, int id) {
 		IPlayer reference = hmodel.getPlayerById(0);
 		
-		super.drawString(g, 3,1, defaultFont, "Point of view: "+reference.getName());
+		super.drawString(g, 4,1, defaultFont, "Point of view: "+reference.getName());
 		
 		int agId = hmodel.getAgAtPos(x, y);
 		IPlayer p = hmodel.getPlayerById(id);
@@ -83,10 +92,14 @@ public class EnvView extends GridWorldView {
 					String role = st.getTerm(2).toString();
 					if(name.equals(p.getName())){
 						team = team_name.equals(Teams.BLUES.getName()) ? Teams.BLUES : Teams.REDS;
-						if(role.equals(TeamRoles.BOMBER))
+						if(role.equals(TeamRoles.BOMBER)){
+							logger.info("DRAWING BOMBER");
 							tr = TeamRoles.BOMBER;
-						else if(role.equals(TeamRoles.PRESIDENT))
+						}
+						else if(role.equals(TeamRoles.PRESIDENT)){
 							tr = TeamRoles.PRESIDENT;
+							logger.info("DRAWING BOMBER");
+						}
 					}
 				} else if(st.getFunctor().equals("leader")){
 					String name = st.getTerm(0).toString();
@@ -97,25 +110,32 @@ public class EnvView extends GridWorldView {
 		}
 		}
 		
-		if(tr.equals(TeamRoles.PRESIDENT)){
-			c = Color.CYAN;
-		} else if(tr.equals(TeamRoles.BOMBER)){
-			c = Color.ORANGE;
-		} else if(team!=null && team.equals(Teams.BLUES)){
+		if(team!=null && team.equals(Teams.BLUES)){
 			c = Color.BLUE;
 		} else if(team!=null && team.equals(Teams.REDS)){
 			c = Color.RED;
-		} else{
+		} if(tr.equals(TeamRoles.PRESIDENT)){
+			c = Color.CYAN;
+		} else if(tr.equals(TeamRoles.BOMBER)){
+			c = Color.ORANGE;
+		}else{
 			c = Color.GRAY;
 		}
 		
 		super.drawAgent(g, x, y, c, -1);
 		
 		g.setColor(Color.BLACK);
+		
 		String str = p.getName();
-		if(rr == RoomRoles.LEADER)
+		if(rr.equals(RoomRoles.LEADER))
 			str = "*"+str+"*";
 		super.drawString(g, x, y, defaultFont, str);
+		
+		if(winner!=null){
+			String ws = winner.equals(Teams.BLUES) ?  "PRESIDENT IS ALIVE" : "PRESIDENT ASSASSINATED";
+			g.setColor(winner.equals(Teams.BLUES) ? Color.BLUE : Color.RED);
+			super.drawString(g, model.getWidth()/3, model.getHeight()/2, bigFont, ws);
+		}
 	}	
 	
 	
