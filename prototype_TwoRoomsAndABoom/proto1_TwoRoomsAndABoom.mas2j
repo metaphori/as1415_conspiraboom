@@ -5,7 +5,7 @@ MAS prototype_TwoRoomsAndABoom {
 	environment: proto1.env.Env(gui,6)
 
 	agents:
-		roby 	proto1_dumb_player; //proto1_human_player;
+		roby 	proto1_dumb_player; //proto1_human_player; proto1_human_player; //
 		marco 	proto1_dumb_player; 
 		ste 	proto1_player agentClass proto1.agent.PlayerAgent agentArchClass proto1.agent.PlayerAgentArch;
 		fede 	proto1_player agentClass proto1.agent.PlayerAgent agentArchClass proto1.agent.PlayerAgentArch;

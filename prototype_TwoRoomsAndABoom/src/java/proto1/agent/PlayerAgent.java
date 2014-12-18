@@ -11,12 +11,14 @@ import org.apache.commons.math3.util.Pair;
 
 
 
+
 import proto1.env.Env;
 import utils.Utils;
 import jason.architecture.AgArch;
 import jason.asSemantics.Agent;
 import jason.asSemantics.Message;
 import jason.asSemantics.Option;
+import jason.asSyntax.Atom;
 import jason.asSyntax.ListTerm;
 import jason.asSyntax.Literal;
 import jason.asSyntax.NumberTerm;
@@ -40,9 +42,12 @@ public class PlayerAgent extends Agent {
 				if(prob!=null){
 					NumberTerm probVal = (NumberTerm) prob.getTerm(0);
 					double probability = Double.parseDouble(probVal.toString());
-					lst.add(new Pair(opt, probability));
+					logger.info("Option plan " + opt.getPlan().getLabel() + " with prob " + probability /*+ 
+							" and tag " + tag.getFunctor()*/);
+					lst.add(new Pair<Option,Double>(opt, probability));
 				}
 			}
+			
 			if(lst.size()>0){
 				//EnumeratedDistribution ed = new EnumeratedDistribution<Option>(lst);
 				//Option result = (Option) ed.sample();

@@ -2,13 +2,12 @@ package proto1.game.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import proto1.game.interfaces.IPlayer;
+import proto1.game.interfaces.*;
 
 public class Player extends GameConcept implements IPlayer {
 
-	protected PlayerRole role;
-	protected Room room;
+	protected IPlayerRole role;
+	protected IRoom room;
 	public final int AGENT_ID = GetNextAgentId();
 	
 	public Player(String agentName){
@@ -16,15 +15,15 @@ public class Player extends GameConcept implements IPlayer {
 		//internal registry: //Player.players.add(this);
 	}
 	
-	public void setRole(PlayerRole role){
+	public void setRole(IPlayerRole role){
 		this.role = role;
 	}
-	public PlayerRole getRole(){ return this.role; }
+	public IPlayerRole getRole(){ return this.role; }
 	
-	public void setRoom(Room room){
+	public void setRoom(IRoom room){
 		this.room = room;
 	}
-	public Room getRoom(){ return this.room; }
+	public IRoom getRoom(){ return this.room; }
 	
 	
 	private static int ID_COUNTER = 0;

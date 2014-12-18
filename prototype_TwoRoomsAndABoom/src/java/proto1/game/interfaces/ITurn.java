@@ -5,8 +5,8 @@ import java.util.Iterator;
 
 import proto1.game.impl.Player;
 
-public interface ITurn extends Iterator<Player>, IGameConcept {
+public interface ITurn<T> extends Iterator<T>, IGameConcept {
 
-	Player currentTurn();
+	T currentTurn();
 	
 }

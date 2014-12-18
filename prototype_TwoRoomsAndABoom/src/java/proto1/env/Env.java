@@ -17,10 +17,12 @@ import proto1.env.Game.NEXT_TURN;
 import proto1.game.config.Actions;
 import proto1.game.config.Rooms;
 import proto1.game.impl.Player;
+import proto1.game.impl.Request;
 import proto1.game.impl.Room;
 import proto1.game.impl.Team;
 import proto1.game.impl.Turn;
 import proto1.game.interfaces.IPlayer;
+import proto1.game.interfaces.IRequest;
 import proto1.game.interfaces.IRoom;
 import proto1.game.interfaces.ITurn;
 import proto1.gui.UserCommandFrame;
@@ -43,7 +45,7 @@ public class Env extends Environment implements Observer {
     public final static int DEFAULT_NUM_PLAYERS = 10;
     public final static int SIZE = 21;
     
-    
+
     /** Called before the MAS execution with the args informed in .mas2j */
     @Override
     public void init(String[] args) {
@@ -60,84 +62,137 @@ public class Env extends Environment implements Observer {
         
         model = new EnvModel(this.game, SIZE);
         if(args.length>=1 && args[0].equals("gui")){
-        	view = new EnvView(model);
+        	view = new EnvView(model, this);
         	model.setView(view);
         }
-        
-        updatePercepts();
     }
 
-    public void updatePercepts(){
-    }
-
+    IRequest lastRequest = null;
     @Override
     public synchronized boolean executeAction(String agName, Structure action) {
-    	boolean result = false;
+    	try{
+	    	boolean result = false;
+	
+	    	Literal act = action;
+	    	
+	    	List<Term> terms = act.getTerms();
+	    	String functor = act.getFunctor();
+	    	IPlayer p = game.getPlayerFromName(agName);
+	    	IRoom room = null;
+	    	if(p!=null)
+	    		room = p.getRoom();
+	    	
+	    	if(functor.equals(Actions.DELEGATE_TO_HUMAN)){
+	    		String str = UserCommandFrame.AskCommandToUser("Player: " + p.getName() + "; " + p.getRole() + " - Phase: " + game.state);
+	    		act = Structure.parseLiteral(str);
+	    	} 
+	    	
+	    	terms = act.getTerms();
+	    	functor = act.getFunctor();    	
+	    	
+	    	if(functor.equals(Actions.WANNA_PLAY) && game.IsAt(GamePhase.Init) ){
+	    		logger.info(">>> " + agName + " wants to play." );
+	    		result = game.AddPlayer(agName);
+	    	} else if(functor.equals(Actions.VOTE_LEADER) && game.IsAt(GamePhase.LeaderSelection)){
+	    		String candidateLeader = ((Atom)terms.get(0)).toString();
+	    		logger.info(">>> " + p + " has voted " + candidateLeader);
+	    		result = game.Vote(agName, candidateLeader);
+	    	} else if(functor.equals(Actions.SELECT_HOSTAGE) && game.IsAt(GamePhase.HostageSelection)){
+	    		String hostage = ((Atom)terms.get(0)).toString();
+	    		logger.info(">>> " + p + " has selected hostage " + hostage);    		
+	    		result = game.SelectHostage(p, hostage);
+	    	} else if(functor.equals(Actions.OK_I_AM_DONE) && game.IsAt(GamePhase.Interaction)){   		
+	    		IPlayer playerOfTurn = game.currentTurn();
+	    		logger.info(">>> " + p + " (="+playerOfTurn+") has completed its turn");    		
+	    		result = game.advanceTurn();
+	    		return result;
+	    	} else if(functor.equals(Actions.CO_REVEAL) && game.IsAt(GamePhase.Interaction)){  
+	    		String dest = ((Atom)terms.get(0)).toString();
+	    		logger.info(">>> " + p + " wants to co-reveal with " + dest);
+	    		
+			    	lastRequest = sendRequest(p, functor, game.getPlayerFromName(dest));
+			    		
+			    	if(lastRequest==null) return false;
+			    		
+			    	result = true;	    			
+		    		
+			    	logger.info("Waiting for response");
+		    		while(result && !lastRequest.answered())
+		    			this.wait();
+		    		logger.info("Sblocked now from waiting [" + agName);
+		    		return true;
+	    		
+	    	} else if(functor.equals(Actions.ACCEPT) && game.IsAt(GamePhase.Interaction) && lastRequest!=null ){
+	    		logger.info(">>> " + p + " accepts request");
+	    		
+	    			result = acceptRequest(p, lastRequest);
+	    			this.notify();
+	    			logger.info("Sblocking request");
+	    			return result;
 
-    	Literal act = action;
-    	
-    	List<Term> terms = act.getTerms();
-    	String functor = act.getFunctor();
-    	Player p = game.getPlayerFromName(agName);
-    	
-    	if(functor.equals(Actions.DELEGATE_TO_HUMAN)){
-    		String str = UserCommandFrame.AskCommandToUser("Player: " + p.getName() + " - Phase: " + game.state);
-    		act = Structure.parseLiteral(str);
-    	} 
-    	
-    	terms = act.getTerms();
-    	functor = act.getFunctor();    	
-    	
-    	if(functor.equals(Actions.WANNA_PLAY) && game.IsAt(GamePhase.Init) ){
-    		//logger.info(">>> " + p + " wants to play." );
-    		result = game.AddPlayer(agName);
-    	} else if(functor.equals(Actions.VOTE_LEADER) && game.IsAt(GamePhase.LeaderSelection)){
-    		String candidateLeader = ((Atom)terms.get(0)).toString();
-    		logger.info(">>> " + p + " has voted " + candidateLeader);
-    		result = game.Vote(agName, candidateLeader);
-    	} else if(functor.equals(Actions.SELECT_HOSTAGE) && game.IsAt(GamePhase.HostageSelection)){
-    		String hostage = ((Atom)terms.get(0)).toString();
-    		result = game.SelectHostage(p, hostage);
-    	} else if(functor.equals(Actions.OK_I_AM_DONE) && game.IsAt(GamePhase.Interaction)){   		
-    		Player playerOfTurn = game.getTurnForRoom(p.getRoom()).currentTurn();
-    		result = game.advanceTurnInRoom(p.getRoom());	
+	    	} else if(functor.equals(Actions.REJECT) && game.IsAt(GamePhase.Interaction) && lastRequest!=null ){
+	    		logger.info(">>> " + p + " rejects request");
+	    		
+	    			result = rejectRequest(p, lastRequest);
+	    			this.notify();
+	    			logger.info("Sblocking request");
+	    			return result;
+	    	} else{
+	    		logger.severe("°°°°°°°°°°°°°°°°°°°°°°°°°° action not recognized from " + p + ": "+ functor);
+	    	}
+	
+			return result;
+    	} catch(Exception exc){
+    		logger.severe("Exception: " + exc.getMessage());
+    		exc.printStackTrace();
+    		return false;
     	}
-
-    	// only if action completed successfully, update agents' percepts
-		if (result) {
-			updatePercepts();
-			try {
-				Thread.sleep(100);
-			} catch (Exception e) {
-			}
-		}
-		else{
-			logger.info("EEEEEEEEEEEEEEHHHHH????????????????");
-		}
-		return result;
-		
     }  
     
-    
-    public class EndInteractionTask extends TimerTask {
-    	private Game game;
+    public synchronized IRequest sendRequest(IPlayer from, String what, IPlayer to){
+    	IRequest request = new Request(from, to, what);
     	
-    	public EndInteractionTask(Game game){
-    		this.game = game;
+    	Literal literal = Literal.parseLiteral("request("+request.getName()+",co_reveal," 
+    			+ from.getName() + ")");
+    	addPercept(to.getName(), literal);
+    	
+    	return request;
+    }
+    public synchronized boolean acceptRequest(IPlayer me, IRequest req){
+    	if(!req.getRecipient().equals(me)){
+    		logger.severe("ERROR: I'm responding to a request that wasn't for me. It was for " +req.getRecipient());
+    		return false; // Request 'req' is not for me
+    	}
+    	logger.info("//////////////////////\\\\\\\\\\\\\\\\\\\\\\\\");
+    	req.answer(Actions.ACCEPT);
+    	
+    	IPlayer initiator = req.getInitiator();
+    	Literal initiatorIdentity = Literal.parseLiteral("role("+initiator.getName()+","+
+    			initiator.getRole().getTeam().getName()+","
+				+initiator.getRole().getTeamRole().getName()+")");
+    	Literal myIdentity = Literal.parseLiteral("role("+me.getName()+","+
+    			me.getRole().getTeam().getName()+","
+				+me.getRole().getTeamRole().getName()+")");
+    	
+    	addPercept(me.getName(), initiatorIdentity);
+    	addPercept(initiator.getName(), myIdentity);
+    	
+    	return true;
+    }
+    public synchronized boolean rejectRequest(IPlayer me, IRequest req){
+    	if(!req.getRecipient().equals(me)){ 
+    		logger.severe("ERROR: I'm rejecting a request that wasn't for me. It was for " +req.getRecipient());
+    		return false; // Request 'req' is not for me
     	}
     	
-		@Override
-		public void run() {
-			game.StartSelectionOfHostages();	
-		}
+    	req.answer(Actions.REJECT);
     	
-    }
-	
-    
-    /** Called before the end of MAS execution */
-    @Override
-    public void stop() {
-        super.stop();
+    	String context = "context(round("+game.round+"))";
+    	Literal literal = Literal.parseLiteral("reject("+me.getName()+","+
+    	req.getInitiator().getName()+","+req.getSubject()+","+context+")");
+    	AddPerceptInRoom(me.getRoom(), literal);
+    	
+    	return true;
     }
 
 	public synchronized void update(Observable obj, Object arg) {
@@ -148,13 +203,18 @@ public class Env extends Environment implements Observer {
 			GamePhase completed_phase = ev.phase;
 			
 			switch(completed_phase){
-				/*******************************************************/
-				/* SETUP PERFORMED: roles and rooms have been assigned */
+				/*********************************************************/
+				/** INIT COMPLETED **/
+				/*********************************************************/
 				case Init:
 					clearAllPercepts();
 					logger.info("COMPLETED: INIT");
 					game.SetupNewRound();
 					break;
+					
+				/*********************************************************/
+				/** ROUND SETUP COMPLETED **/
+				/*********************************************************/					
 				case SetupRound:
 					logger.info("COMPLETED: ROUND SETUP" + game.round);
 
@@ -162,7 +222,7 @@ public class Env extends Environment implements Observer {
 					removePerceptsByUnif(Literal.parseLiteral("round(_)[source(_)]"));	
 					addPercept(Literal.parseLiteral("round("+game.round+")"));
 					
-					for(Player p : game.players){
+					for(IPlayer p : game.players){
 						removePerceptsByUnif(p.getName(), Literal.parseLiteral("my_role(_,_)[source(_)]"));
 						removePerceptsByUnif(p.getName(), Literal.parseLiteral("my_room(_)[source(_)]"));
 						// NOTE: room_leader is not global as it is room specific
@@ -183,14 +243,16 @@ public class Env extends Environment implements Observer {
 		    		removePerceptsByUnif(Literal.parseLiteral("phase(_)[source(_)]"));
 		    		addPercept(Literal.parseLiteral("phase(leader_selection)"));		    		
 					break;
-				/********************************************************/
-				/* LEADER SELECTION PERFORMED: both rooms have a leader */
+					
+				/*********************************************************/
+				/** LEADER SELECTION PERFORMED **/
+				/*********************************************************/
 				case LeaderSelection:
 					logger.info("COMPLETED: LEADER SELECTION");
 
 					// communicate leader to all room's players
-		    		for(Room room : Rooms.asList()){
-		    			Player leader = room.getLeader();
+		    		for(IRoom room : Rooms.asList()){
+		    			IPlayer leader = room.getLeader();
 		    			logger.info("Leader of " + room + " is " + leader);
 		    			Literal literal = Literal.parseLiteral("room_leader("+leader.getName()+")");
 		    			AddPerceptInRoom(room, literal);					
@@ -204,19 +266,27 @@ public class Env extends Environment implements Observer {
 		    		//new Timer().schedule(new EndInteractionTask(game), getInteractionTime(game.round));		    		
 		    		
 		    		break;
-					/********************************************************/
-					/* INTERACTION PERFORMED */					
+		    		
+				/*********************************************************/
+				/** INTERACTION PERFORMED **/
+				/*********************************************************/
 				case Interaction:
 					logger.info("COMPLETED: INTERACTION");
 					removePerceptsByUnif(Literal.parseLiteral("phase(_)"));
 		    		addPercept(Literal.parseLiteral("phase(hostages_exchange)"));   					
 					break;
-					/********************************************************/
-					/* HOSTAGE SELECTION PERFORMED: ready to swap */					
+
+				/*********************************************************/
+				/** HOSTAGE SELECTION COMPLETED **/
+				/*********************************************************/				
 				case HostageSelection:
-					logger.info("Update from game: complete phase HOSTAGE SELECTION");
+					logger.info("COMPLETED: HOSTAGE SELECTION");
 					game.SetupNewRound();		
 					break;
+					
+				/*********************************************************/
+				/** END **/
+				/*********************************************************/					
 				case End: /* do nothing */
 					logger.info("******************************************************************\n");
 					logger.info("************************** END OF GAME ***************************");
@@ -233,31 +303,44 @@ public class Env extends Environment implements Observer {
 		} // end if(completed event)
 		else if(event instanceof NEXT_TURN){
 			NEXT_TURN turnev = (NEXT_TURN)event;
-    		IRoom room = turnev.room;
     		IPlayer player = turnev.player;
+    		IRoom room = player.getRoom();
     		
     		Literal removeliteral = Literal.parseLiteral("turn(_)[source(_)]");
     		RemovePerceptInRoom(room, removeliteral);
     		
     		Literal literal = Literal.parseLiteral("turn("+player.getName()+")");
-    		logger.info("NEW TURN (" + room + ") TO " + player);
 		    AddPerceptInRoom(room, literal);
 		}
 	} // end update() method
 	
 	public synchronized void AddPerceptInRoom(IRoom room, Literal literal){
-		for(Player p : game.getPlayersInRoom(room)){
+		for(IPlayer p : game.getPlayersInRoom(room)){
 			addPercept(p.getName(), literal);
 		}		
 	}
 	
 	public synchronized void RemovePerceptInRoom(IRoom room, Literal literal){
-		for(Player p : game.getPlayersInRoom(room)){
-			removePerceptsByUnif(p.getName(), Literal.parseLiteral("turn(_)[source(_)]"));
+		for(IPlayer p : game.getPlayersInRoom(room)){
+			removePerceptsByUnif(p.getName(), literal);
 		}
 	}
 	
 	public int getInteractionTime(int round){
 		return 1000;
 	}
+    
+    public class EndInteractionTask extends TimerTask {
+    	private Game game;
+    	
+    	public EndInteractionTask(Game game){
+    		this.game = game;
+    	}
+    	
+		@Override
+		public void run() {
+			game.StartSelectionOfHostages();	
+		}
+    	
+    }	
 }

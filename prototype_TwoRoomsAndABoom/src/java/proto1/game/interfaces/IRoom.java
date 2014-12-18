@@ -4,11 +4,11 @@ import java.util.Collection;
 
 import proto1.game.impl.Player;
 
-public interface IRoom {
+public interface IRoom extends IGameConcept {
 	
-	Player getLeader();
-	void setLeader(Player newLeader);
+	IPlayer getLeader();
+	void setLeader(IPlayer newLeader);
 	
-	Collection<Player> getPlayers();
+	Collection<IPlayer> getPlayers();
 
 }

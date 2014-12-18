@@ -16,7 +16,8 @@ room_mates(Rms) :- my_room(MyRoom) & .findall(P, room(P, MyRoom), Rms).
 	!delegate_to_human.
 	
 +turn(Who) : .my_name(Me) & Who==Me <- 
-	!delegate_to_human.
+	!delegate_to_human;
+	ok_i_am_done.
 
 +phase(hostages_exchange) : .my_name(Me) & room_leader(Me) <-
 	!delegate_to_human.	
@@ -24,4 +25,10 @@ room_mates(Rms) :- my_room(MyRoom) & .findall(P, room(P, MyRoom), Rms).
 +!delegate_to_human <-
 	?phase(Phase);
 	.print("I'll delegate my actions during ", Phase, " to a human.");
+	delegate_to_human.
+	
+-!delegate_to_human <- true.
+	
++request(RID, What, From) <- 
+	.print("Received a request (", What, ") from ", From, " ... delegating to human");
 	delegate_to_human.

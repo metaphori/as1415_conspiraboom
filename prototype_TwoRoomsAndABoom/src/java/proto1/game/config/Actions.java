@@ -7,4 +7,7 @@ public class Actions {
 	public static final String SELECT_HOSTAGE = "select_hostage";
 	public static final String OK_I_AM_DONE = "ok_i_am_done";
 	public static final String DELEGATE_TO_HUMAN = "delegate_to_human";
+	public static final String CO_REVEAL = "co_reveal";
+	public static final String ACCEPT = "ok";
+	public static final String REJECT = "no";
 }

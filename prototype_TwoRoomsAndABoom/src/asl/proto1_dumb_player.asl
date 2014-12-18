@@ -35,6 +35,10 @@ room_mates(Rms) :- my_room(MyRoom) & .findall(P, room(P, MyRoom), Rms).
 	.
 	
 +phase(interaction) <- true	.
+
++request(RID, What, From) <-  
+	.print("Received a request (", What, ") from ", From, "... saying no");
+	no.
 	
 +phase(hostages_exchange) : .my_name(Me) & room_leader(Me) <-
 	!choose_hostage(H);

@@ -15,6 +15,8 @@ import proto1.game.impl.Player;
 import proto1.game.impl.PlayerRole;
 import proto1.game.impl.Room;
 import proto1.game.impl.Team;
+import proto1.game.interfaces.IPlayer;
+import proto1.game.interfaces.IRoom;
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
 
@@ -37,7 +39,7 @@ public class EnvModel extends GridWorldModel implements Observer {
 	
 	protected Logger logger = Logger.getLogger("Model");
 	
-	protected List<Player> players = new ArrayList<Player>();
+	protected List<IPlayer> players = new ArrayList<IPlayer>();
 	
 	protected Game game;
 	
@@ -137,9 +139,9 @@ public class EnvModel extends GridWorldModel implements Observer {
 		} // end ROOM_PLACEMENT
 		else if(event instanceof Game.NEW_LEADER){
 			//logger.info("Update from game: NEW LEADER");
-			Player leader1 = Rooms.ROOM1.getLeader();
-			Player leader2 = Rooms.ROOM2.getLeader();
-			Player[] leaders = new Player[]{leader1, leader2};
+			IPlayer leader1 = Rooms.ROOM1.getLeader();
+			IPlayer leader2 = Rooms.ROOM2.getLeader();
+			IPlayer[] leaders = new IPlayer[]{leader1, leader2};
 			for(int i=0; i<leaders.length; i++ ){
 				if(leaders[i]!=null){
 					int agId = getAgentId(leaders[i]);
@@ -152,16 +154,16 @@ public class EnvModel extends GridWorldModel implements Observer {
 		} else if(event instanceof Game.HOSTAGES_EXCHANGE){
 			//logger.info("Update from game: HOSTAGES EXCHANGE");
 			Game.HOSTAGES_EXCHANGE actualEv = (Game.HOSTAGES_EXCHANGE)event;
-			Player h1 = actualEv.h1;
-			Player h2 = actualEv.h2;
+			IPlayer h1 = actualEv.h1;
+			IPlayer h2 = actualEv.h2;
 			moveHostage(h1);
 			moveHostage(h2);
 		}
 	}
 	
 	public void PlacePlayersRandomlyInRespectiveRooms(){
-		for(Player p : game.players){
-			Room room = p.getRoom();
+		for(IPlayer p : game.players){
+			IRoom room = p.getRoom();
 			int agId = getAgentId(p);
 			
 			Location loc = getFreePositionInRoom(room);
@@ -179,7 +181,7 @@ public class EnvModel extends GridWorldModel implements Observer {
 		} // end for		
 	}
 	
-	public void moveHostage(Player p){
+	public void moveHostage(IPlayer p){
 		/* Player p has changed room.
 		 * This has to reflect in the model.
 		 * Let's do it step by step.
@@ -209,12 +211,12 @@ public class EnvModel extends GridWorldModel implements Observer {
 			}
 			this.setAgPos(agId, x, y);
 			try{
-				Thread.sleep(0);
+				Thread.sleep(100);
 			} catch(Exception exc){}
 		}
 	}
 	
-	public Location getFreePositionInRoom(Room room){
+	public Location getFreePositionInRoom(IRoom room){
 		int room_start = room.equals(Rooms.ROOM1) ? 2 : (size/2)+2;
 		int room_end = room.equals(Rooms.ROOM1) ? (size/2)-2 : size-2;
 		
@@ -251,14 +253,14 @@ public class EnvModel extends GridWorldModel implements Observer {
 	}
 	*/
 	
-	public int getAgentId(Player player){
+	public int getAgentId(IPlayer player){
 		if(!players.contains(player)){
 			players.add(player);
 		}
 		return players.indexOf(player);
 	}
 	
-	public Player getPlayerById(int id){
+	public IPlayer getPlayerById(int id){
 		for(int i=0; i<players.size(); i++){
 			if(id==i) return players.get(i);
 		}

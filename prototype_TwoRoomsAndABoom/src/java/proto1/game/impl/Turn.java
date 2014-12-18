@@ -2,10 +2,11 @@ package proto1.game.impl;
 
 import java.util.*;
 
+import proto1.game.interfaces.IPlayer;
 import proto1.game.interfaces.ITurn;
 
-public class Turn extends GameConcept implements ITurn {
-	protected List<Player> players = null;
+public class Turn<T> extends GameConcept implements ITurn<T> {
+	protected List<T> players = null;
 	protected int rounds = 1;
 	protected int round = 0;
 	protected int k = 0;
@@ -14,9 +15,9 @@ public class Turn extends GameConcept implements ITurn {
 
 	protected int nplayers = 0;
 	
-	public Turn(Collection<Player> players, int rounds){
-		super("turn"+(TURN_K++));
-		this.players = new ArrayList<Player>(players);
+	public Turn(Collection<T> players, int rounds){
+		super("turn_"+(TURN_K++));
+		this.players = new ArrayList<T>(players);
 		this.nplayers = players.size();
 		this.rounds = rounds;
 		this.k = 0;
@@ -34,14 +35,14 @@ public class Turn extends GameConcept implements ITurn {
 		return (round) < rounds;
 	}
 
-	public Player next() {
+	public T next() {
 		if(hasNextInThisRound()){
-			Player p = players.get(k++);
+			T p = players.get(k++);
 			return p;
 		} else if(hasNextRound()){
 			round++;
 			this.k=0;
-			Player p = players.get(this.k++);
+			T p = players.get(this.k++);
 			return p;
 		}
 		return null;
@@ -50,7 +51,7 @@ public class Turn extends GameConcept implements ITurn {
 	public void remove() {
 	}
 
-	public Player currentTurn() {
+	public T currentTurn() {
 		return players.get(this.k-1);
 	}
 	
