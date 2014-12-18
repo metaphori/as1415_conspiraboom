@@ -92,13 +92,11 @@ public class EnvView extends GridWorldView {
 					String role = st.getTerm(2).toString();
 					if(name.equals(p.getName())){
 						team = team_name.equals(Teams.BLUES.getName()) ? Teams.BLUES : Teams.REDS;
-						if(role.equals(TeamRoles.BOMBER)){
-							logger.info("DRAWING BOMBER");
+						if(role.equals(TeamRoles.BOMBER.getName())){
 							tr = TeamRoles.BOMBER;
 						}
-						else if(role.equals(TeamRoles.PRESIDENT)){
+						else if(role.equals(TeamRoles.PRESIDENT.getName())){
 							tr = TeamRoles.PRESIDENT;
-							logger.info("DRAWING BOMBER");
 						}
 					}
 				} else if(st.getFunctor().equals("leader")){
@@ -109,15 +107,15 @@ public class EnvView extends GridWorldView {
 			}
 		}
 		}
-		
-		if(team!=null && team.equals(Teams.BLUES)){
-			c = Color.BLUE;
-		} else if(team!=null && team.equals(Teams.REDS)){
-			c = Color.RED;
-		} if(tr.equals(TeamRoles.PRESIDENT)){
+
+		if(tr.equals(TeamRoles.PRESIDENT)){
 			c = Color.CYAN;
 		} else if(tr.equals(TeamRoles.BOMBER)){
 			c = Color.ORANGE;
+		} else if(team!=null && team.equals(Teams.BLUES)){
+			c = Color.BLUE;
+		} else if(team!=null && team.equals(Teams.REDS)){
+			c = Color.RED;
 		}else{
 			c = Color.GRAY;
 		}
@@ -127,14 +125,14 @@ public class EnvView extends GridWorldView {
 		g.setColor(Color.BLACK);
 		
 		String str = p.getName();
-		if(rr.equals(RoomRoles.LEADER))
+		if(rr.equals(RoomRoles.LEADER.getName()))
 			str = "*"+str+"*";
 		super.drawString(g, x, y, defaultFont, str);
 		
 		if(winner!=null){
 			String ws = winner.equals(Teams.BLUES) ?  "PRESIDENT IS ALIVE" : "PRESIDENT ASSASSINATED";
 			g.setColor(winner.equals(Teams.BLUES) ? Color.BLUE : Color.RED);
-			super.drawString(g, model.getWidth()/3, model.getHeight()/2, bigFont, ws);
+			super.drawString(g, model.getWidth()/2, model.getHeight()/2, bigFont, ws);
 		}
 	}	
 	

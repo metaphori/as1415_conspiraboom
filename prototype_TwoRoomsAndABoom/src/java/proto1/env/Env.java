@@ -296,6 +296,14 @@ public class Env extends Environment implements Observer {
 					if(winner==null){
 						logger.info("NO WINNER");
 					}else{
+						for(IPlayer p1 : game.players){
+							for(IPlayer p2 : game.players){
+								addPercept(p2.getName(), 
+										Literal.parseLiteral("role("+p1.getName()+","+
+												p1.getRole().getTeam().getName()+","+
+												p1.getRole().getTeamRole().getName()+")"));
+							}
+						}
 						logger.info("THE WINNER IS..................." + winner);
 						model.setWinner(winner);
 					}
