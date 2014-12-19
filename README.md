@@ -1,3 +1,5 @@
+The complete report of the work could be found here: http://apice.unibo.it/xwiki/bin/view/Courses/Sa1415Projects-ConspiraBoom
+
 ConspiraBoom
 ====================
 
