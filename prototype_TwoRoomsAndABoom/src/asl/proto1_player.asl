@@ -175,8 +175,12 @@ count([H|T], N) :- count(T, K) & N=K+1.
 +role(Player, Team, Role)[source(OtherPlayer)] : team_mate(OtherPlayer) <-
 	.print("Thank you ", OtherPlayer, " for having shared your knowledge with me.");
 	?my_role(MyTeam, _);
+	+role(Player, Team, Role);
 	if(Team == MyTeam){
 		// take mental note: he is a team-mate :)
 		+team_mate(Player);
 	}.
+	
+// I believe what my team mates tell me they believe
++A[source(TeamMate)] : team_mate(TeamMate) <- +A.
 	
